@@ -53,18 +53,10 @@
 <!-- SystemJS support. -->
 <script src="src/system.bundle.js" charset="utf-8"> </script>
 
-
 <!-- Import map -->
-<script src="src/import-map.json" type="systemjs-importmap" charset="utf-8">
-  {
-    "imports": {
-      "cc": "./cocos-js/cc.js"  // 相对路径修正:ml-citation{ref="9" data="citationList"}
-    }
-  }
-</script>
+<script src="src/import-map.json" type="systemjs-importmap" charset="utf-8"> </script>
 
 <script>
-	System.config({baseURL: './'});
     System.import('./index.js').catch(function(err) { console.error(err); })
 </script>
 
