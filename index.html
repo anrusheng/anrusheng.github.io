@@ -52,14 +52,6 @@
 
 <!-- SystemJS support. -->
 <script src="src/system.bundle.js" charset="utf-8"> </script>
-<script>
-  SystemJS.config({
-    baseURL: './',  // 关键修改点:ml-citation{ref="6,9" data="citationList"}
-    packages: {
-      '/cocos-js': { defaultExtension: 'js' }
-    }
-  });
-</script>
 
 
 <!-- Import map -->
@@ -72,6 +64,7 @@
 </script>
 
 <script>
+	System.config({baseURL: './'});
     System.import('./index.js').catch(function(err) { console.error(err); })
 </script>
 
