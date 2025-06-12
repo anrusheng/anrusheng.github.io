@@ -52,9 +52,24 @@
 
 <!-- SystemJS support. -->
 <script src="src/system.bundle.js" charset="utf-8"> </script>
+<script>
+  SystemJS.config({
+    baseURL: './',  // 关键修改点:ml-citation{ref="6,9" data="citationList"}
+    packages: {
+      '/cocos-js': { defaultExtension: 'js' }
+    }
+  });
+</script>
+
 
 <!-- Import map -->
-<script src="src/import-map.json" type="systemjs-importmap" charset="utf-8"> </script>
+<script src="src/import-map.json" type="systemjs-importmap" charset="utf-8">
+  {
+    "imports": {
+      "cc": "./cocos-js/cc.js"  // 相对路径修正:ml-citation{ref="9" data="citationList"}
+    }
+  }
+</script>
 
 <script>
     System.import('./index.js').catch(function(err) { console.error(err); })
