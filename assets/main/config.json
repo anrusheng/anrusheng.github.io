@@ -1,0 +1,81 @@
+{
+    "importBase": "import",
+    "nativeBase": "native",
+    "name": "main",
+    "deps": [
+        "internal"
+    ],
+    "uuids": [
+        "05feecd73",
+        "0734df269",
+        "15feecd73",
+        "15feecd73@6c48a",
+        "86136ec4-623f-4985-bf48-86d0eef49671",
+        "86136ec4-623f-4985-bf48-86d0eef49671@6c48a",
+        "86136ec4-623f-4985-bf48-86d0eef49671@f9941",
+        "972d5cd5-5218-436b-a895-e2b17032e6d2",
+        "ba21476f-2866-4f81-9c4d-6e359316e448",
+        "d3b1f1d7-08ec-465c-86a8-7728afea44da@f9941",
+        "d9a20ca3-13b5-41d2-bbb7-47657359c8ea@f9941",
+        "fd8ec536-a354-4a17-9c74-4f3883c378c8"
+    ],
+    "paths": {
+        "972d5cd5-5218-436b-a895-e2b17032e6d2": [
+            "db:/assets/others/StartScene",
+            "cc.SceneAsset"
+        ],
+        "fd8ec536-a354-4a17-9c74-4f3883c378c8": [
+            "db:/internal/default_renderpipeline/builtin-forward",
+            "cc.RenderPipeline"
+        ],
+        "ba21476f-2866-4f81-9c4d-6e359316e448": [
+            "db:/internal/physics/default-physics-material",
+            "cc.PhysicsMaterial"
+        ]
+    },
+    "scenes": {
+        "db://assets/others/StartScene.scene": "972d5cd5-5218-436b-a895-e2b17032e6d2"
+    },
+    "packs": {
+        "0734df269": [
+            "86136ec4-623f-4985-bf48-86d0eef49671@f9941",
+            "972d5cd5-5218-436b-a895-e2b17032e6d2"
+        ],
+        "05feecd73": [
+            "d3b1f1d7-08ec-465c-86a8-7728afea44da@f9941",
+            "d9a20ca3-13b5-41d2-bbb7-47657359c8ea@f9941"
+        ]
+    },
+    "versions": {
+        "import": [],
+        "native": []
+    },
+    "redirect": [
+        "ba21476f-2866-4f81-9c4d-6e359316e448",
+        "0",
+        "ba21476f-2866-4f81-9c4d-6e359316e448",
+        "0"
+    ],
+    "debug": true,
+    "extensionMap": {},
+    "hasPreloadScript": true,
+    "dependencyRelationships": {
+        "86136ec4-623f-4985-bf48-86d0eef49671@6c48a": [
+            "86136ec4-623f-4985-bf48-86d0eef49671"
+        ],
+        "86136ec4-623f-4985-bf48-86d0eef49671@f9941": [
+            "86136ec4-623f-4985-bf48-86d0eef49671@6c48a"
+        ],
+        "972d5cd5-5218-436b-a895-e2b17032e6d2": [
+            "86136ec4-623f-4985-bf48-86d0eef49671@f9941",
+            "d9a20ca3-13b5-41d2-bbb7-47657359c8ea@f9941",
+            "d3b1f1d7-08ec-465c-86a8-7728afea44da@f9941"
+        ],
+        "d3b1f1d7-08ec-465c-86a8-7728afea44da@f9941": [
+            "d3b1f1d7-08ec-465c-86a8-7728afea44da@6c48a"
+        ],
+        "d9a20ca3-13b5-41d2-bbb7-47657359c8ea@f9941": [
+            "d9a20ca3-13b5-41d2-bbb7-47657359c8ea@6c48a"
+        ]
+    }
+}
