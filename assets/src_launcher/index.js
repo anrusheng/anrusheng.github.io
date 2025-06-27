@@ -2961,6 +2961,11 @@ System.register("chunks:///_virtual/LoginView.ts", ['./rollupPluginModLoBabelHel
           this.gmLoginNode.active = !SDKFacade.isWxStable() && LauncherLoginManager.model.whiteAccount;
           this.garbageCollectNode.active = SDKFacade.isMiniGame();
           this.ebGmSeverId.string = "95001";
+          {
+            this.gmLoginNode.active = true;
+            this.loginGM.node.active = false;
+            this.nodeLogin.active = false;
+          }
 
           this._updateSelectedServer();
 

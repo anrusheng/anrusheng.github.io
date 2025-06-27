@@ -2855,7 +2855,7 @@ System.register("chunks:///_virtual/ActorMain.ts", ['./rollupPluginModLoBabelHel
 
           if (this._animeState.name == EAnimeName.walk) {
             this.node.lookAt(this._vTargetPos);
-          } else if (this._animeState.name == EAnimeName.atk) ;else if (this._animeState.name == EAnimeName.rest) {
+          } else if (this._animeState.name == EAnimeName.rest) {
             this.playAnime(EAnimeName.walk);
           }
 
@@ -60222,6 +60222,119 @@ System.register("chunks:///_virtual/GM.ts", ['./rollupPluginModLoBabelHelpers.js
   };
 });
 
+System.register("chunks:///_virtual/Graph.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './PathConst.ts'], function (exports) {
+  var _createForOfIteratorHelperLoose, cclegacy, ConnectPointMap;
+
+  return {
+    setters: [function (module) {
+      _createForOfIteratorHelperLoose = module.createForOfIteratorHelperLoose;
+    }, function (module) {
+      cclegacy = module.cclegacy;
+    }, function (module) {
+      ConnectPointMap = module.ConnectPointMap;
+    }],
+    execute: function () {
+      cclegacy._RF.push({}, "025fez7OjZEYYGA6Dmzq/eX", "Graph", undefined);
+      /**
+       * 图的数据结构，key为节点，value为可到达的节点数组
+       */
+
+      /**
+       * 无向图类，支持查找任意两点之间的连通路径
+       */
+
+
+      var Graph = exports('Graph', /*#__PURE__*/function () {
+        /**
+         * 构造函数，传入图的数据结构（自动补全无向边）
+         * @param data 图的邻接表数据
+         */
+        function Graph(data) {
+          this.adjList = void 0;
+          this.adjList = new Map();
+
+          for (var _i = 0, _Object$entries = Object.entries(data); _i < _Object$entries.length; _i++) {
+            var _Object$entries$_i = _Object$entries[_i],
+                key = _Object$entries$_i[0],
+                value = _Object$entries$_i[1];
+            if (!this.adjList.has(key)) this.adjList.set(key, []);
+
+            for (var _iterator = _createForOfIteratorHelperLoose(value), _step; !(_step = _iterator()).done;) {
+              var neighbor = _step.value; // 添加正向边
+
+              if (!this.adjList.get(key).includes(neighbor)) {
+                this.adjList.get(key).push(neighbor);
+              } // 添加反向边
+
+
+              if (!this.adjList.has(neighbor)) this.adjList.set(neighbor, []);
+
+              if (!this.adjList.get(neighbor).includes(key)) {
+                this.adjList.get(neighbor).push(key);
+              }
+            }
+          }
+        }
+        /**
+         * 查找从 start 到 end 的一条路径（广度优先，返回最短路径）
+         * @param start 起点
+         * @param end 终点
+         * @returns 路径数组，如 ['A', 'B', 'D']，找不到返回 null
+         */
+
+
+        var _proto = Graph.prototype;
+
+        _proto.findPath = function findPath(start, end) {
+          if (!this.adjList.has(start) || !this.adjList.has(end)) return null;
+          var queue = [[start, [start]]];
+          var visited = new Set([start]);
+
+          while (queue.length > 0) {
+            var _ref = queue.shift(),
+                node = _ref[0],
+                path = _ref[1];
+
+            if (node === end) return path;
+
+            for (var _iterator2 = _createForOfIteratorHelperLoose(this.adjList.get(node) || []), _step2; !(_step2 = _iterator2()).done;) {
+              var neighbor = _step2.value;
+
+              if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push([neighbor, [].concat(path, [neighbor])]);
+              }
+            }
+          }
+
+          return null;
+        };
+
+        return Graph;
+      }());
+      var graph = exports('graph', new Graph(ConnectPointMap));
+      globalThis['graph'] = graph; // 示例用法（可删除）
+
+      /*
+      const data: GraphData = {
+          A: ['B', 'C'],
+          B: ['C', 'D'],
+          C: ['E'],
+          D: [],
+          E: ['A']
+      };
+        const graph = new Graph(data);
+      console.log(graph.findPath('A', 'D')); // 输出: [ 'A', 'B', 'D' ]
+      console.log(graph.findPath('D', 'A')); // 输出: [ 'D', 'B', 'A' ]
+      console.log(graph.findPath('A', 'E')); // 输出: [ 'A', 'C', 'E' ]
+      console.log(graph.findPath('E', 'D')); // 输出: [ 'E', 'C', 'B', 'D' ]
+      */
+
+      cclegacy._RF.pop();
+    }
+  };
+});
+
 System.register("chunks:///_virtual/GridDto.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './ColorConst2.ts', './NetworkEnum.ts', './BagConst.ts', './EquipConst.ts', './GridHelper.ts'], function (exports) {
   var _createClass, cclegacy, ColorEnum, StatType, E_gridType, gridTipsType, StatClass, GridHelper;
 
@@ -74289,23 +74402,10 @@ System.register("chunks:///_virtual/LoginMgr.ts", ['./rollupPluginModLoBabelHelp
         };
 
         _proto.createConnection = function createConnection() {
-          var url; // 外网微信小游戏代理服务器 
-
-          if (SDKFacade.distributeType === DistributeType.WechatMiniGame) {
-            if (!SDKFacade.isInternalDev()) {
-              url = "wss://" + SDKFacade.packageConfig.wechat.serverProxy + "/?host=" + this.serverIp + ":" + this.serverPort;
-            } else {
-              var wsStr = SDKFacade.useWss ? "wss" : "ws";
-              url = wsStr + "://" + SDKFacade.packageConfig.wechat.serverProxy + ":" + SDKFacade.packageConfig.wechat.serverPort + "/ws";
-            }
-          } else {
-            var _wsStr = SDKFacade.useWss ? "wss" : "ws";
-
-            url = _wsStr + "://" + this.serverIp + ":" + this.serverPort + "/ws";
+          {
+            this._cuid = GameApp.network.createConnection("wss://s95001.bmzqsg.lansors.com:8001/ws", true);
+            return;
           }
-
-          log("[LoginMgr] createConnection " + url);
-          this._cuid = GameApp.network.createConnection(url, true);
         };
 
         _proto.sendLoginAuth = function sendLoginAuth() {
@@ -80062,8 +80162,8 @@ System.register("chunks:///_virtual/MainQuestV.ts", ['./rollupPluginModLoBabelHe
   };
 });
 
-System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './TransitionView.ts', './I18n.ts', './LauncherDefine.ts', './DefineConst.ts', './GameEvents.ts', './ViewConfig.ts', './ViewMgr.ts', './GameHelper.ts', './Building.ts', './NetworkEnum.ts', './EventConst.ts', './BuildExport.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, geometry, Node, Camera, Vec3, tween, UIOpacity, Vec2, math, PhysicsSystem, MeshRenderer, view, Component, TransitionView, I18n, TRANSITION_VIEW_PERCENT_100, SceneEnum, GameEvents, ViewRoot, ViewMgr, GameHelper, Building, BuildingType, EventConst, EBuildingId;
+System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './TransitionView.ts', './I18n.ts', './LauncherDefine.ts', './DefineConst.ts', './GameEvents.ts', './ViewConfig.ts', './ViewMgr.ts', './GameHelper.ts', './Building.ts', './EventConst.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, geometry, Node, Camera, tween, UIOpacity, macro, Component, TransitionView, I18n, TRANSITION_VIEW_PERCENT_100, SceneEnum, GameEvents, ViewRoot, ViewMgr, GameHelper, Building, EventConst;
 
   return {
     setters: [function (module) {
@@ -80077,14 +80177,9 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
       geometry = module.geometry;
       Node = module.Node;
       Camera = module.Camera;
-      Vec3 = module.Vec3;
       tween = module.tween;
       UIOpacity = module.UIOpacity;
-      Vec2 = module.Vec2;
-      math = module.math;
-      PhysicsSystem = module.PhysicsSystem;
-      MeshRenderer = module.MeshRenderer;
-      view = module.view;
+      macro = module.macro;
       Component = module.Component;
     }, function (module) {
       TransitionView = module.default;
@@ -80105,34 +80200,30 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
     }, function (module) {
       Building = module.Building;
     }, function (module) {
-      BuildingType = module.BuildingType;
-    }, function (module) {
       EventConst = module.default;
-    }, function (module) {
-      EBuildingId = module.EBuildingId;
     }],
     execute: function () {
-      var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8;
+      var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9;
 
       cclegacy._RF.push({}, "55d77BhsVtFf4oLC8quzyH4", "MainScene", undefined);
 
       var ccclass = _decorator.ccclass,
           property = _decorator.property;
       var Ray = geometry.Ray;
-      var MainScene = exports('MainScene', (_dec = ccclass("MainScene"), _dec2 = property(Node), _dec3 = property(Node), _dec4 = property(Node), _dec5 = property(Node), _dec6 = property({
+      var MainScene = exports('MainScene', (_dec = ccclass("MainScene"), _dec2 = property(Node), _dec3 = property(Node), _dec4 = property(Node), _dec5 = property(Node), _dec6 = property(Node), _dec7 = property({
         type: Camera,
         tooltip: "场景主摄像机"
-      }), _dec7 = property({
+      }), _dec8 = property({
         group: "Zoom",
         tooltip: "最小缩放值 (相机Y坐标)",
         slide: true,
         range: [1, 200, 1]
-      }), _dec8 = property({
+      }), _dec9 = property({
         group: "Zoom",
         tooltip: "最大缩放值 (相机Y坐标)",
         slide: true,
         range: [1, 200, 1]
-      }), _dec9 = property({
+      }), _dec10 = property({
         group: "Zoom",
         tooltip: "默认缩放值 (相机Y坐标)",
         slide: true,
@@ -80147,42 +80238,43 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
             args[_key] = arguments[_key];
           }
 
-          _this = _Component.call.apply(_Component, [this].concat(args)) || this;
+          _this = _Component.call.apply(_Component, [this].concat(args)) || this; // 主界面UI根节点
 
-          _initializerDefineProperty(_this, "uiView", _descriptor, _assertThisInitialized(_this));
+          _initializerDefineProperty(_this, "uiView", _descriptor, _assertThisInitialized(_this)); // 顶部UI根节点
 
-          _initializerDefineProperty(_this, "uiTop", _descriptor2, _assertThisInitialized(_this));
 
-          _initializerDefineProperty(_this, "fullNode", _descriptor3, _assertThisInitialized(_this));
+          _initializerDefineProperty(_this, "uiTop", _descriptor2, _assertThisInitialized(_this)); // 全屏节点（可用于全局遮罩等）
 
-          _initializerDefineProperty(_this, "bgNode", _descriptor4, _assertThisInitialized(_this));
 
-          _initializerDefineProperty(_this, "mainCamera", _descriptor5, _assertThisInitialized(_this));
+          _initializerDefineProperty(_this, "fullNode", _descriptor3, _assertThisInitialized(_this)); // 背景节点
 
-          _initializerDefineProperty(_this, "minZoomY", _descriptor6, _assertThisInitialized(_this));
 
-          _initializerDefineProperty(_this, "maxZoomY", _descriptor7, _assertThisInitialized(_this));
+          _initializerDefineProperty(_this, "bgNode", _descriptor4, _assertThisInitialized(_this)); // 触摸事件监听节点
 
-          _initializerDefineProperty(_this, "defaultZoomY", _descriptor8, _assertThisInitialized(_this));
 
-          _this._percent = 0; // 触摸控制相关
+          _initializerDefineProperty(_this, "touchNode", _descriptor5, _assertThisInitialized(_this)); // 主摄像机
 
-          _this._touchStartPoints = [];
-          _this._cameraStartPos = new Vec3();
-          _this._initialPinchDistance = 0;
-          _this._ray = new geometry.Ray();
-          _this._wasAtMinZoom = false;
-          _this._wasAtMaxZoom = false;
-          _this._isPanning = false;
-          _this._touchStartTime = 0;
-          _this._clickThreshold = 10; // 点击容差，移动超过这个值不算点击
 
-          _this._clickTimeThreshold = 200; // 点击时间容差，触摸超过这个时间不算点击
+          _initializerDefineProperty(_this, "mainCamera", _descriptor6, _assertThisInitialized(_this)); // 摄像机缩放参数
 
-          _this._allBuildings = [];
-          _this._lastCameraPos = null;
-          _this._lastCameraRot = null;
-          _this._lastFocusBuilding = null; // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-登录加载界面进度，总和应该是100 start-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+          _initializerDefineProperty(_this, "minZoomY", _descriptor7, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "maxZoomY", _descriptor8, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "defaultZoomY", _descriptor9, _assertThisInitialized(_this));
+
+          _this._percent = 0; // 启动进度
+          // 建筑与摄像机状态管理
+
+          _this._allBuildings = []; // 场景中所有建筑
+
+          _this._lastCameraPos = null; // 上次点击建筑前的摄像机位置
+
+          _this._lastCameraRot = null; // 上次点击建筑前的摄像机角度
+
+          _this._lastFocusBuilding = null; // 上次聚焦的建筑
+          // 启动流程相关事件回调
 
           _this._onGameAppInitPer = function (percent) {
             _this._percent += percent * 0.6;
@@ -80200,35 +80292,33 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
             _this._percent += 20;
             console.log("onLoginSyncFinish updateMsg");
             TransitionView.instance.updateMsg(_this._percent, I18n.at("launcher/LOGIN_SYNC_FINISH"));
-          }; // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-登录加载界面进度，总和应该是100 end  -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+          }; // 启动成功后显示序章或主界面
 
 
           _this._gameAppInitSuc = function () {
-            //这里显示序章
-            _this._showPrologue(); // GuideLayer.instance.onGameInitFinish();
-
+            _this._showPrologue();
           };
 
-          _this._showPrologue = function () {// if (!GameApp.Md.SettingModel.inited) return;
-            // let data = GameApp.Md.SettingModel.getSettingState(SettingShiftKey.Prologue_Finish);
-            // if (!data) {
-            //     let conf = GameApp.DataConf.ConfigValue.at("show_prologue"); //序章配置
-            //     if (!!conf && Utils.isWidelyNull(conf.content)) {
-            //         let _challengeId = GameApp.Md.SelectLevelModel.startFightId;
-            //         GameApp.Ctrl.BattleCtrl.req_ChallengeStartReq(_challengeId);
-            //         GameApp.Md.SettingModel.setSettingStatus(SettingShiftKey.Prologue_Finish, true);
-            //     } else {
-            //         GuideLayer.instance.isNewAccount = true;
-            //         ViewMgr.openLv1View(ViewConfigKey.PrologueView);
-            //     }
-            // } else {
-            // this.displayMainInterface();
-            // assetManager.getBundle("main").loadScene("main", (err, res) => {
-            //     TransitionView.instance.hide();
-            //     director.runScene(res);
-            // })
-            // }
+          _this._showPrologue = function () {// 可根据业务需求决定是否显示序章
           };
+          /**
+           * 处理建筑点击事件，记录摄像机状态并打开建筑界面
+           */
+
+
+          _this.onCLICK_BUILDING = function (building) {
+            // 记录摄像机当前状态，便于后续复位
+            _this._lastCameraPos = _this.mainCamera.node.position.clone();
+            _this._lastCameraRot = _this.mainCamera.node.eulerAngles.clone();
+            /** 打开建筑界面 */
+
+            GameApp.Ctrl.BuildingCtrl.doEnterBuild(building.type);
+            building.hideRoof(); // 点击后隐藏屋顶
+          };
+          /**
+           * 处理建筑详情关闭事件，平滑复位摄像机
+           */
+
 
           _this.onOPEN_BUILDING_DETAIL = function (state) {
             if (_this._lastCameraPos && _this._lastCameraRot) {
@@ -80246,20 +80336,27 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
           return _this;
         }
 
-        var _proto = MainScene.prototype;
+        var _proto = MainScene.prototype; // 显示主界面UI
 
         _proto.displayMainInterface = function displayMainInterface() {
           this.uiView.getChildByName("mainInterface").active = true;
           var broadcastNode = this.node.getChildByName("BroadcastComp");
           broadcastNode.active = true;
           GameHelper.safeGetComponent(broadcastNode, UIOpacity).opacity = 0; //GameApp.Ctrl.SoundCtrl.playBgm(BGM_ID.MAIN_SCENE);
-        };
+        }
+        /**
+         * 场景初始化，注册全局事件，初始化建筑、摄像机等
+         */
+        ;
 
         _proto.start = function start() {
-          var _root,
-              _this2 = this;
+          var _this2 = this,
+              _root;
+
+          macro.ENABLE_MULTI_TOUCH = true; // 启用多点触控
 
           if (!GameApp.ready) {
+            // 启动流程相关事件注册
             TransitionView.instance.node.once(TRANSITION_VIEW_PERCENT_100, function () {
               TransitionView.instance.hide();
             });
@@ -80269,62 +80366,46 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
             GameApp.eventEmitter.on(GameEvents.LOGIN_SYNC_FINISH, this._onLoginSyncFinish);
             GameApp.eventEmitter.on(GameEvents.GAMEAPP_INIT_SUC, this._gameAppInitSuc);
             GameApp.eventEmitter.on(GameEvents.Setting_Init_Finish, this._showPrologue);
-            GameApp.eventEmitter.on(EventConst.OPEN_BUILDING_DETAIL, this.onOPEN_BUILDING_DETAIL); // SDKFacade.eventEmitter.on(LauncherEvents.EVENT_SDK_BACKTOLOGIN,this.switchAccount);
-            // SDKFacade.eventEmitter.on(LauncherEvents.EVENT_LOGOUT_SUC,this.sdkBackToLogin);
-            // SDKFacade.eventEmitter.on(LauncherEvents.EVENT_SDK_AUTHCHECK,this.sdkBackToLogin);
-            // LauncherGlobal.instance.EventEmitter.on(LauncherEvents.EVENT_SDK_BACKTOLOGIN,this.switchAccount);
-            // LauncherGlobal.instance.EventEmitter.on(LauncherEvents.EVENT_LOGOUT_SUC,this.sdkBackToLogin);
-            // LauncherGlobal.instance.EventEmitter.on(LauncherEvents.EVENT_SDK_AUTHCHECK,this.sdkBackToLogin);
-
+            GameApp.eventEmitter.on("CLICK_BUILDING", function (building) {
+              return _this2.onCLICK_BUILDING(building);
+            });
+            GameApp.eventEmitter.on(EventConst.OPEN_BUILDING_DETAIL, this.onOPEN_BUILDING_DETAIL);
             TransitionView.instance.show();
             TransitionView.instance.updateMsg(0, I18n.at("launcher/GAME_GAMEAPP_INIT"));
             GameApp.load();
             GameApp.loginMgr.createConnection();
           } else {
             this._gameAppInitSuc();
-          }
+          } // 初始化UI根节点
+
 
           ViewMgr.init({
             root: (_root = {}, _root[ViewRoot.UIView] = this.uiView, _root[ViewRoot.Top] = this.uiTop, _root)
           }); // 查找场景中所有建筑
 
-          this._allBuildings = this.node.scene.getComponentsInChildren(Building); // 添加触摸事件监听器
+          this._allBuildings = this.node.scene.getComponentsInChildren(Building); // 注册摄像机缩放相关事件
 
-          this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
-          this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-          this.node.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
-          this.node.on(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
-          this.node.on(Node.EventType.MOUSE_WHEEL, this.onMouseWheel, this);
           GameApp.eventEmitter.on("CAMERA_ZOOM_REACH_MIN", function () {
             return _this2.onCameraZoomReachMin();
           });
           GameApp.eventEmitter.on("CAMERA_ZOOM_REACH_MAX", function () {
             return _this2.onCameraZoomReachMax();
-          });
+          }); // 初始化摄像机位置
 
           if (this.mainCamera) {
             var pos = this.mainCamera.node.position;
             this.mainCamera.node.setPosition(pos.x, this.defaultZoomY, pos.z);
-          } // this.fullNode.on(Node.EventType.TOUCH_START,this.addFullSceneStartListener,this,true);
-          // this.fullNode.on(Node.EventType.TOUCH_END,this.addFullSceneEndListener,this,true);
-          // this.fullNode.on(Node.EventType.TOUCH_MOVE,this.addFullSceneMoveListener,this,true);
-          //预加载场景
-          // GameApp.sceneMgr.preLoadScene(SceneEnum.GameScene);
-
+          }
 
           GameApp.eventEmitter.emit(GameEvents.start_in_Scene, SceneEnum.MainScene);
-        } // switchAccount(){//悬浮窗-点击账户-点击注销登录，返回登录界面并要调用changeAccount
-        //     console.log("mainScene switchAccount");
-        //     SDKFacade.bridge.switchAccount();
-        // }
-        // sdkBackToLogin(){//悬浮窗-点击注销
-        //     console.log("mainScene switchAccount");
-        //     GameApp.loginMgr.backToLogin();
-        // }
-        ;
-
-        _proto.onEnable = function onEnable() {//GuideLayer.createLayerItem(this.node);
         };
+
+        _proto.onEnable = function onEnable() {// 可用于UI层级管理等
+        }
+        /**
+         * 场景销毁时注销所有事件
+         */
+        ;
 
         _proto.onDestroy = function onDestroy() {
           var _this3 = this;
@@ -80334,16 +80415,10 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
           GameApp.eventEmitter.off(GameEvents.LOGIN_SYNC_FINISH, this._onLoginSyncFinish);
           GameApp.eventEmitter.off(GameEvents.GAMEAPP_INIT_SUC, this._gameAppInitSuc);
           GameApp.eventEmitter.off(GameEvents.Setting_Init_Finish, this._showPrologue);
-          GameApp.eventEmitter.off(EventConst.OPEN_BUILDING_DETAIL, this.onOPEN_BUILDING_DETAIL); // LauncherGlobal.instance.EventEmitter.off(LauncherEvents.EVENT_SDK_BACKTOLOGIN,this.switchAccount);
-          // LauncherGlobal.instance.EventEmitter.off(LauncherEvents.EVENT_LOGOUT_SUC,this.sdkBackToLogin);
-          // LauncherGlobal.instance.EventEmitter.off(LauncherEvents.EVENT_SDK_AUTHCHECK,this.sdkBackToLogin);
-          // 移除触摸事件监听器
-
-          this.node.off(Node.EventType.TOUCH_START, this.onTouchStart, this);
-          this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-          this.node.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
-          this.node.off(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
-          this.node.off(Node.EventType.MOUSE_WHEEL, this.onMouseWheel, this);
+          GameApp.eventEmitter.off("CLICK_BUILDING", function (building) {
+            return _this3.onCLICK_BUILDING(building);
+          });
+          GameApp.eventEmitter.off(EventConst.OPEN_BUILDING_DETAIL, this.onOPEN_BUILDING_DETAIL);
           GameApp.eventEmitter.off("CAMERA_ZOOM_REACH_MIN", function () {
             return _this3.onCameraZoomReachMin();
           });
@@ -80352,298 +80427,19 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
           });
         }
         /**
-         * 当触摸开始时调用
+         * 摄像机缩放到最小时隐藏所有建筑屋顶
          */
         ;
-
-        _proto.onTouchStart = function onTouchStart(event) {
-          if (!this.mainCamera) return;
-          this._isPanning = false;
-          this._touchStartTime = Date.now();
-          var touches = event.getTouches();
-          this._touchStartPoints = touches.map(function (t) {
-            return t.getLocation();
-          });
-
-          this._cameraStartPos.set(this.mainCamera.node.position);
-
-          if (touches.length >= 2) {
-            var touch1 = touches[0].getLocation();
-            var touch2 = touches[1].getLocation();
-            this._initialPinchDistance = Vec2.distance(touch1, touch2);
-          }
-        }
-        /**
-         * 当触摸移动时调用
-         */
-        ;
-
-        _proto.onTouchMove = function onTouchMove(event) {
-          if (!this.mainCamera || this._touchStartPoints.length === 0) return;
-          var touches = event.getTouches();
-
-          if (touches.length === 1 && this._touchStartPoints.length === 1) {
-            // 单指平移
-            var startPoint = this._touchStartPoints[0];
-            var currentPoint = touches[0].getLocation();
-
-            if (Vec2.distance(startPoint, currentPoint) > this._clickThreshold) {
-              this._isPanning = true;
-            }
-
-            if (!this._isPanning) return; // 如果没有开始平移，则不移动
-
-            var delta = currentPoint.subtract(startPoint); // 根据摄像机高度调整移动速度，避免移动过快或过慢
-
-            var panSpeed = 0.002;
-            var moveSpeed = this.mainCamera.node.position.y * panSpeed;
-            var right = this.mainCamera.node.right.clone();
-            right.y = 0;
-            right.normalize();
-            var forward = this.mainCamera.node.forward.clone();
-            forward.y = 0;
-            forward.normalize();
-            var move = right.multiplyScalar(-delta.x * moveSpeed).add(forward.multiplyScalar(-delta.y * moveSpeed));
-
-            var newPos = this._cameraStartPos.clone().add(move);
-
-            this.mainCamera.node.setPosition(newPos);
-          } else if (touches.length >= 2 && this._touchStartPoints.length >= 2) {
-            // 双指缩放
-            var touch1 = touches[0].getLocation();
-            var touch2 = touches[1].getLocation();
-            var currentDistance = Vec2.distance(touch1, touch2); // 1. 计算缩放量
-
-            var deltaDistance = this._initialPinchDistance - currentDistance;
-            var zoomSpeed = 0.1; // 缩放速度因子
-            // 2. 计算缩放中心点（世界坐标）
-
-            var focalPoint = touch1.lerp(touch2, 0.5);
-            this.mainCamera.screenPointToRay(focalPoint.x, focalPoint.y, this._ray);
-            var P0 = this._ray.o;
-            var V = this._ray.d;
-            var targetPos;
-
-            if (V.y < -0.01) {
-              // 通过射线与地平面（y=0）求交点
-              var t = -P0.y / V.y;
-              targetPos = P0.clone().add(V.clone().multiplyScalar(t));
-            } else {
-              // 如果摄像机平行于地面，则向前缩放一个默认距离
-              targetPos = this.mainCamera.node.position.clone().add(this.mainCamera.node.forward.clone().multiplyScalar(this.defaultZoomY));
-            } // 3. 计算移动方向和距离
-
-
-            var direction = targetPos.clone().subtract(this.mainCamera.node.position).normalize();
-
-            var _move = direction.multiplyScalar(deltaDistance * zoomSpeed);
-
-            var _newPos = this.mainCamera.node.position.clone().add(_move); // 4. 应用缩放限制
-
-
-            var oldY = this.mainCamera.node.position.y;
-            var clampedY = math.clamp(_newPos.y, this.minZoomY, this.maxZoomY);
-
-            if (_newPos.y !== clampedY) {
-              // 如果超限，则按比例缩放移动向量
-              if (Math.abs(_move.y) > 0.001) {
-                var scale = (clampedY - oldY) / _move.y;
-                _newPos = this.mainCamera.node.position.clone().add(_move.multiplyScalar(scale));
-              } else {
-                _newPos.y = clampedY;
-              }
-            }
-
-            this.mainCamera.node.setPosition(_newPos); // 5. 抛出事件
-
-            var currentY = this.mainCamera.node.position.y;
-
-            if (currentY <= this.minZoomY + 0.1 && !this._wasAtMinZoom) {
-              GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MIN");
-              this._wasAtMinZoom = true;
-            } else if (currentY > this.minZoomY + 0.1) {
-              this._wasAtMinZoom = false;
-            }
-
-            if (currentY >= this.maxZoomY - 0.1 && !this._wasAtMaxZoom) {
-              GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MAX");
-              this._wasAtMaxZoom = true;
-            } else if (currentY < this.maxZoomY - 0.1) {
-              this._wasAtMaxZoom = false;
-            } // 为下一次移动更新初始距离，以支持连续缩放
-
-
-            this._initialPinchDistance = currentDistance;
-          }
-        }
-        /**
-         * 当触摸结束时调用
-         */
-        ;
-
-        _proto.onTouchEnd = function onTouchEnd(event) {
-          var touches = event.getTouches();
-
-          if (touches.length === 1) {
-            // 这是一个点击事件的结束
-            var touchDuration = Date.now() - this._touchStartTime;
-
-            if (!this._isPanning && touchDuration < this._clickTimeThreshold) {
-              this.handleSingleClick(event.touch.getLocation());
-            }
-          } // 当手指全部抬起时，清空触摸点
-
-
-          if (touches.length === 0) {
-            this._touchStartPoints = [];
-          } else {
-            // 否则，更新触摸点状态以准备下一次的单指或多指操作
-            this.onTouchStart(event);
-          }
-        }
-        /**
-         * 当触摸取消时调用
-         */
-        ;
-
-        _proto.onTouchCancel = function onTouchCancel(event) {
-          this.onTouchEnd(event);
-        };
-
-        _proto.handleSingleClick = function handleSingleClick(screenPos) {
-          if (!this.mainCamera) return;
-          this.mainCamera.screenPointToRay(screenPos.x, screenPos.y, this._ray); // 确保物理系统已经启用
-
-          if (PhysicsSystem.instance.raycast(this._ray)) {
-            var raycastResults = PhysicsSystem.instance.raycastResults;
-
-            for (var i = 0; i < raycastResults.length; i++) {
-              var item = raycastResults[i];
-              var building = item.collider.getComponent(Building);
-
-              if (building) {
-                if (building.type === EBuildingId.None) break;
-                /** 打开建筑界面 */
-
-                GameApp.Ctrl.BuildingCtrl.doEnterBuild(building.type);
-                console.log("\u4F60\u70B9\u51FB\u4E86\u5EFA\u7B51: " + BuildingType[building.type]);
-                building.hideRoof(); // 点击后隐藏屋顶
-                // --- 开始镜头聚焦逻辑 ---
-                // 0. 获取建筑的世界坐标 (优化：使用渲染包围盒中心代替节点轴心)
-
-                var targetWorldPos = void 0;
-                var meshRenderer = building.getComponentInChildren(MeshRenderer);
-
-                if (meshRenderer && meshRenderer.model && meshRenderer.model.worldBounds) {
-                  targetWorldPos = meshRenderer.model.worldBounds.center.clone();
-                } else {
-                  targetWorldPos = building.node.worldPosition.clone();
-                } // 1. 定义目标屏幕坐标 (水平居中, 垂直方向居中)
-
-
-                var visibleSize = view.getVisibleSize();
-                var targetScreenPos = new Vec2(visibleSize.width / 2, visibleSize.height * 1 / 2); // 2. 获取从目标屏幕坐标发出的射线方向
-
-                this.mainCamera.screenPointToRay(targetScreenPos.x, targetScreenPos.y, this._ray);
-                var rayDir = this._ray.d; // 3. 根据目标点和射线方向，反解出摄像机需要移动的距离t
-                // 公式: FinalCamPos = TargetWorldPos - t * rayDir
-                // 已知 FinalCamPos.y = minZoomY, 求解 t
-
-                if (Math.abs(rayDir.y) < 0.01) {
-                  console.warn("摄像机视线平行于地平线，无法精确聚焦。");
-                  return; // 避免除以零
-                }
-
-                var t = (targetWorldPos.y - this.minZoomY) / rayDir.y; // 4. 计算出最终的摄像机位置
-
-                var offset = rayDir.clone().multiplyScalar(t);
-                var newCameraPos = targetWorldPos.clone().subtract(offset); // 5. 使用tween平滑移动摄像机
-
-                tween(this.mainCamera.node).to(0.5, {
-                  position: newCameraPos
-                }, {
-                  easing: 'cubicOut'
-                }).start(); // --- 镜头聚焦逻辑结束 ---
-                // 记录摄像机状态
-
-                this._lastCameraPos = this.mainCamera.node.position.clone();
-                this._lastCameraRot = this.mainCamera.node.eulerAngles.clone();
-                this._lastFocusBuilding = building;
-                break; // 只处理第一个被击中的建筑
-              }
-            }
-          }
-        }
-        /**
-         * 当鼠标滚轮滚动时调用
-         */
-        ;
-
-        _proto.onMouseWheel = function onMouseWheel(event) {
-          if (!this.mainCamera) return; // 1. 获取滚动值和缩放速度
-
-          var scrollDelta = event.getScrollY();
-          var zoomSpeed = 0.01; // 鼠标滚轮的缩放速度因子
-          // 2. 计算缩放中心点（世界坐标）
-
-          var mousePos = event.getLocation();
-          this.mainCamera.screenPointToRay(mousePos.x, mousePos.y, this._ray);
-          var P0 = this._ray.o;
-          var V = this._ray.d;
-          var targetPos;
-
-          if (V.y < -0.01) {
-            // 通过射线与地平面（y=0）求交点
-            var t = -P0.y / V.y;
-            targetPos = P0.clone().add(V.clone().multiplyScalar(t));
-          } else {
-            // 如果摄像机平行于地面，则向前缩放一个默认距离
-            targetPos = this.mainCamera.node.position.clone().add(this.mainCamera.node.forward.clone().multiplyScalar(this.defaultZoomY));
-          } // 3. 计算移动方向和距离
-
-
-          var direction = targetPos.clone().subtract(this.mainCamera.node.position).normalize();
-          var move = direction.multiplyScalar(-scrollDelta * zoomSpeed); // scrollY向上为正，表示放大，应向目标点移动，所以是正值
-
-          var newPos = this.mainCamera.node.position.clone().add(move); // 4. 应用缩放限制
-
-          var oldY = this.mainCamera.node.position.y;
-          var clampedY = math.clamp(newPos.y, this.minZoomY, this.maxZoomY);
-
-          if (newPos.y !== clampedY) {
-            // 如果超限，则按比例缩放移动向量
-            if (Math.abs(move.y) > 0.001) {
-              var scale = (clampedY - oldY) / move.y;
-              newPos = this.mainCamera.node.position.clone().add(move.multiplyScalar(scale));
-            } else {
-              newPos.y = clampedY;
-            }
-          }
-
-          this.mainCamera.node.setPosition(newPos); // 5. 抛出事件
-
-          var currentY = this.mainCamera.node.position.y;
-
-          if (currentY <= this.minZoomY + 0.1 && !this._wasAtMinZoom) {
-            GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MIN");
-            this._wasAtMinZoom = true;
-          } else if (currentY > this.minZoomY + 0.1) {
-            this._wasAtMinZoom = false;
-          }
-
-          if (currentY >= this.maxZoomY - 0.1 && !this._wasAtMaxZoom) {
-            GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MAX");
-            this._wasAtMaxZoom = true;
-          } else if (currentY < this.maxZoomY - 0.1) {
-            this._wasAtMaxZoom = false;
-          }
-        };
 
         _proto.onCameraZoomReachMin = function onCameraZoomReachMin() {
           this._allBuildings.forEach(function (b) {
             return b.hideRoof();
           });
-        };
+        }
+        /**
+         * 摄像机缩放到最大时显示所有建筑屋顶
+         */
+        ;
 
         _proto.onCameraZoomReachMax = function onCameraZoomReachMax() {
           this._allBuildings.forEach(function (b) {
@@ -80672,28 +80468,33 @@ System.register("chunks:///_virtual/MainScene.ts", ['./rollupPluginModLoBabelHel
         enumerable: true,
         writable: true,
         initializer: null
-      }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, "mainCamera", [_dec6], {
+      }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, "touchNode", [_dec6], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: null
+      }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, "mainCamera", [_dec7], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, "minZoomY", [_dec7], {
+      }), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, "minZoomY", [_dec8], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return 20;
         }
-      }), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, "maxZoomY", [_dec8], {
+      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "maxZoomY", [_dec9], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return 100;
         }
-      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "defaultZoomY", [_dec9], {
+      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "defaultZoomY", [_dec10], {
         configurable: true,
         enumerable: true,
         writable: true,
@@ -88077,6 +87878,417 @@ System.register("chunks:///_virtual/MsgConsts.ts", ['cc'], function (exports) {
         ShowType[ShowType["NOT_DEAL"] = 5] = "NOT_DEAL";
         return ShowType;
       }({})); // 不提示
+
+      cclegacy._RF.pop();
+    }
+  };
+});
+
+System.register("chunks:///_virtual/MultiTouchCtrl.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc'], function (exports) {
+  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, Node, Camera, Vec3, geometry, macro, input, Input, Vec2, math, PhysicsSystem, MeshRenderer, view, sys, screen, tween, Component;
+
+  return {
+    setters: [function (module) {
+      _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
+      _inheritsLoose = module.inheritsLoose;
+      _initializerDefineProperty = module.initializerDefineProperty;
+      _assertThisInitialized = module.assertThisInitialized;
+    }, function (module) {
+      cclegacy = module.cclegacy;
+      _decorator = module._decorator;
+      Node = module.Node;
+      Camera = module.Camera;
+      Vec3 = module.Vec3;
+      geometry = module.geometry;
+      macro = module.macro;
+      input = module.input;
+      Input = module.Input;
+      Vec2 = module.Vec2;
+      math = module.math;
+      PhysicsSystem = module.PhysicsSystem;
+      MeshRenderer = module.MeshRenderer;
+      view = module.view;
+      sys = module.sys;
+      screen = module.screen;
+      tween = module.tween;
+      Component = module.Component;
+    }],
+    execute: function () {
+      var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7;
+
+      cclegacy._RF.push({}, "a81c5rnwSNGxpn3qhbtkDoA", "MultiTouchCtrl", undefined);
+
+      var ccclass = _decorator.ccclass,
+          property = _decorator.property;
+      var MultiTouchCtrl = exports('MultiTouchCtrl', (_dec = ccclass('MultiTouchCtrl'), _dec2 = property({
+        tooltip: '是否开启多点触控'
+      }), _dec3 = property({
+        tooltip: '是否全局监听（全屏手势）'
+      }), _dec4 = property({
+        type: Node,
+        tooltip: '需要监听触摸事件的目标节点'
+      }), _dec5 = property({
+        type: Camera,
+        tooltip: '场景主摄像机'
+      }), _dec6 = property({
+        tooltip: '最小缩放值 (相机Y坐标)'
+      }), _dec7 = property({
+        tooltip: '最大缩放值 (相机Y坐标)'
+      }), _dec8 = property({
+        tooltip: '默认缩放值 (相机Y坐标)'
+      }), _dec(_class = (_class2 = /*#__PURE__*/function (_Component) {
+        _inheritsLoose(MultiTouchCtrl, _Component);
+
+        function MultiTouchCtrl() {
+          var _this;
+
+          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+          }
+
+          _this = _Component.call.apply(_Component, [this].concat(args)) || this;
+
+          _initializerDefineProperty(_this, "enableMultiTouch", _descriptor, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "globalListen", _descriptor2, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "target", _descriptor3, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "mainCamera", _descriptor4, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "minZoomY", _descriptor5, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "maxZoomY", _descriptor6, _assertThisInitialized(_this));
+
+          _initializerDefineProperty(_this, "defaultZoomY", _descriptor7, _assertThisInitialized(_this));
+
+          _this._touchStartPoints = [];
+          _this._cameraStartPos = new Vec3();
+          _this._initialPinchDistance = 0;
+          _this._ray = new geometry.Ray();
+          _this._wasAtMinZoom = false;
+          _this._wasAtMaxZoom = false;
+          _this._isPanning = false;
+          _this._touchStartTime = 0;
+          _this._clickThreshold = 10;
+          _this._clickTimeThreshold = 200;
+          return _this;
+        }
+
+        var _proto = MultiTouchCtrl.prototype;
+
+        _proto.onEnable = function onEnable() {
+          macro.ENABLE_MULTI_TOUCH = this.enableMultiTouch;
+
+          if (this.globalListen) {
+            input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+            input.on(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            input.on(Input.EventType.TOUCH_END, this.onTouchEnd, this);
+            input.on(Input.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
+            input.on(Input.EventType.MOUSE_WHEEL, this.onMouseWheel, this);
+          } else if (this.target) {
+            this.target.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
+            this.target.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            this.target.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
+            this.target.on(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
+            this.target.on(Node.EventType.MOUSE_WHEEL, this.onMouseWheel, this);
+          }
+        };
+
+        _proto.onDisable = function onDisable() {
+          if (this.globalListen) {
+            input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
+            input.off(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            input.off(Input.EventType.TOUCH_END, this.onTouchEnd, this);
+            input.off(Input.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
+            input.off(Input.EventType.MOUSE_WHEEL, this.onMouseWheel, this);
+          } else if (this.target) {
+            this.target.off(Node.EventType.TOUCH_START, this.onTouchStart, this);
+            this.target.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            this.target.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
+            this.target.off(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
+            this.target.off(Node.EventType.MOUSE_WHEEL, this.onMouseWheel, this);
+          }
+        };
+
+        _proto.onTouchStart = function onTouchStart(event) {
+          console.log('onTouchStart touches:', event.getAllTouches().length);
+          if (!this.mainCamera) return;
+          this._isPanning = false;
+          this._touchStartTime = Date.now();
+          var touches = event.getAllTouches();
+          this._touchStartPoints = touches.map(function (t) {
+            return t.getLocation();
+          });
+
+          this._cameraStartPos.set(this.mainCamera.node.position);
+
+          if (touches.length >= 2) {
+            var touch1 = touches[0].getLocation();
+            var touch2 = touches[1].getLocation();
+            this._initialPinchDistance = Vec2.distance(touch1, touch2);
+          }
+        };
+
+        _proto.onTouchMove = function onTouchMove(event) {
+          console.log('onTouchMove touches:', event.getAllTouches().length);
+          if (!this.mainCamera || this._touchStartPoints.length === 0) return;
+          var touches = event.getAllTouches();
+
+          if (touches.length === 1 && this._touchStartPoints.length === 1) {
+            // 单指平移
+            var startPoint = this._touchStartPoints[0];
+            var currentPoint = touches[0].getLocation();
+
+            if (Vec2.distance(startPoint, currentPoint) > this._clickThreshold) {
+              this._isPanning = true;
+            }
+
+            if (!this._isPanning) return;
+            var delta = currentPoint.subtract(startPoint);
+            var panSpeed = 0.002;
+            var moveSpeed = this.mainCamera.node.position.y * panSpeed;
+            var right = this.mainCamera.node.right.clone();
+            right.y = 0;
+            right.normalize();
+            var forward = this.mainCamera.node.forward.clone();
+            forward.y = 0;
+            forward.normalize();
+            var move = right.multiplyScalar(-delta.x * moveSpeed).add(forward.multiplyScalar(-delta.y * moveSpeed));
+
+            var newPos = this._cameraStartPos.clone().add(move);
+
+            this.mainCamera.node.setPosition(newPos);
+          } else if (touches.length >= 2 && this._touchStartPoints.length >= 2) {
+            // 双指缩放
+            var touch1 = touches[0].getLocation();
+            var touch2 = touches[1].getLocation();
+            var currentDistance = Vec2.distance(touch1, touch2);
+            var deltaDistance = currentDistance - this._initialPinchDistance;
+            var zoomSpeed = 0.1;
+            var focalPoint = touch1.lerp(touch2, 0.5);
+            this.mainCamera.screenPointToRay(focalPoint.x, focalPoint.y, this._ray);
+            var P0 = this._ray.o;
+            var V = this._ray.d;
+            var targetPos;
+
+            if (V.y < -0.01) {
+              var t = -P0.y / V.y;
+              targetPos = P0.clone().add(V.clone().multiplyScalar(t));
+            } else {
+              targetPos = this.mainCamera.node.position.clone().add(this.mainCamera.node.forward.clone().multiplyScalar(this.defaultZoomY));
+            }
+
+            var direction = targetPos.clone().subtract(this.mainCamera.node.position).normalize();
+
+            var _move = direction.multiplyScalar(deltaDistance * zoomSpeed);
+
+            var _newPos = this.mainCamera.node.position.clone().add(_move);
+
+            var oldY = this.mainCamera.node.position.y;
+            var clampedY = math.clamp(_newPos.y, this.minZoomY, this.maxZoomY);
+
+            if (_newPos.y !== clampedY) {
+              if (Math.abs(_move.y) > 0.001) {
+                var scale = (clampedY - oldY) / _move.y;
+                _newPos = this.mainCamera.node.position.clone().add(_move.multiplyScalar(scale));
+              } else {
+                _newPos.y = clampedY;
+              }
+            }
+
+            this.mainCamera.node.setPosition(_newPos); // 缩放边界事件抛出
+
+            var currentY = this.mainCamera.node.position.y;
+
+            if (currentY <= this.minZoomY + 0.1) {
+              GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MIN");
+            }
+
+            if (currentY >= this.maxZoomY - 0.1) {
+              GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MAX");
+            }
+
+            this._initialPinchDistance = currentDistance;
+          }
+        };
+
+        _proto.onTouchEnd = function onTouchEnd(event) {
+          var touches = event.getTouches();
+
+          if (touches.length === 1) {
+            var touchDuration = Date.now() - this._touchStartTime;
+
+            if (!this._isPanning && touchDuration < this._clickTimeThreshold) {
+              this.handleSingleClick(event.touch.getLocation());
+            }
+          }
+
+          if (touches.length === 0) {
+            this._touchStartPoints = [];
+          } else {
+            this.onTouchStart(event);
+          }
+        };
+
+        _proto.onTouchCancel = function onTouchCancel(event) {
+          this.onTouchEnd(event);
+        };
+
+        _proto.onMouseWheel = function onMouseWheel(event) {
+          if (!this.mainCamera) return;
+          var scrollDelta = event.getScrollY();
+          var zoomSpeed = 0.01;
+          var mousePos = event.getLocation();
+          this.mainCamera.screenPointToRay(mousePos.x, mousePos.y, this._ray);
+          var P0 = this._ray.o;
+          var V = this._ray.d;
+          var targetPos;
+
+          if (V.y < -0.01) {
+            var t = -P0.y / V.y;
+            targetPos = P0.clone().add(V.clone().multiplyScalar(t));
+          } else {
+            targetPos = this.mainCamera.node.position.clone().add(this.mainCamera.node.forward.clone().multiplyScalar(this.defaultZoomY));
+          }
+
+          var direction = targetPos.clone().subtract(this.mainCamera.node.position).normalize();
+          var move = direction.multiplyScalar(scrollDelta * zoomSpeed);
+          var newPos = this.mainCamera.node.position.clone().add(move);
+          var oldY = this.mainCamera.node.position.y;
+          var clampedY = math.clamp(newPos.y, this.minZoomY, this.maxZoomY);
+
+          if (newPos.y !== clampedY) {
+            if (Math.abs(move.y) > 0.001) {
+              var scale = (clampedY - oldY) / move.y;
+              newPos = this.mainCamera.node.position.clone().add(move.multiplyScalar(scale));
+            } else {
+              newPos.y = clampedY;
+            }
+          }
+
+          this.mainCamera.node.setPosition(newPos); // 缩放边界事件抛出
+
+          var currentY = this.mainCamera.node.position.y;
+
+          if (currentY <= this.minZoomY + 0.1) {
+            GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MIN");
+          }
+
+          if (currentY >= this.maxZoomY - 0.1) {
+            GameApp.eventEmitter.emit("CAMERA_ZOOM_REACH_MAX");
+          }
+        };
+
+        _proto.handleSingleClick = function handleSingleClick(screenPos) {
+          if (!this.mainCamera) return;
+          this.mainCamera.screenPointToRay(screenPos.x, screenPos.y, this._ray);
+
+          if (PhysicsSystem.instance.raycast(this._ray)) {
+            var raycastResults = PhysicsSystem.instance.raycastResults;
+
+            for (var i = 0; i < raycastResults.length; i++) {
+              var item = raycastResults[i];
+              var building = item.collider.getComponent('Building');
+
+              if (building) {
+                GameApp.eventEmitter.emit("CLICK_BUILDING", building); // 7. 获取建筑的世界坐标（优先取包围盒中心，保证聚焦更准确）
+
+                var targetWorldPos = void 0;
+                var meshRenderer = building.getComponentInChildren(MeshRenderer); // if (meshRenderer && meshRenderer.model && meshRenderer.model.worldBounds) {
+                //     // 如果有 MeshRenderer 且有包围盒，取包围盒中心
+                //     targetWorldPos = meshRenderer.model.worldBounds.center.clone();
+                // } else {
+                // 否则取节点的世界坐标
+
+                targetWorldPos = building.node.worldPosition.clone(); // }
+                // 8. 计算希望建筑聚焦到的屏幕坐标（这里设为屏幕水平居中，垂直 20% 处）
+
+                var visibleSize = view.getVisibleSize();
+                var safeTop = 0;
+
+                if (sys.getSafeAreaRect) {
+                  // 适配安全区域（如刘海屏）
+                  safeTop = sys.getSafeAreaRect().y;
+                }
+
+                var targetScreenPos = new Vec2(screen.windowSize.width / 2, safeTop + screen.windowSize.height * 0.8); // 9. 通过目标屏幕坐标生成一条射线，获取射线方向
+
+                this.mainCamera.screenPointToRay(targetScreenPos.x, targetScreenPos.y, this._ray);
+                var rayDir = this._ray.d; // 10. 反解摄像机需要移动到的位置
+                // 公式：FinalCamPos = TargetWorldPos - t * rayDir
+                // 其中 FinalCamPos.y = minZoomY，t 为未知量
+
+                if (Math.abs(rayDir.y) < 0.01) return; // 避免除以零（摄像机视线平行于地面时无法聚焦）
+
+                var t = (targetWorldPos.y - this.minZoomY) / rayDir.y; // 11. 计算最终摄像机位置
+
+                var offset = rayDir.clone().multiplyScalar(t); // offset.z = -offset.z;
+
+                var newCameraPos = targetWorldPos.clone().subtract(offset); // 12. 使用 tween 平滑移动摄像机到目标位置
+
+                tween(this.mainCamera.node).to(0.5, {
+                  position: newCameraPos
+                }, {
+                  easing: 'cubicOut'
+                }).start();
+                break;
+              }
+            }
+          }
+        };
+
+        return MultiTouchCtrl;
+      }(Component), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "enableMultiTouch", [_dec2], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return true;
+        }
+      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, "globalListen", [_dec3], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return true;
+        }
+      }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, "target", [_dec4], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return null;
+        }
+      }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, "mainCamera", [_dec5], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return null;
+        }
+      }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, "minZoomY", [_dec6], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return 15.5;
+        }
+      }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, "maxZoomY", [_dec7], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return 42;
+        }
+      }), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, "defaultZoomY", [_dec8], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return 42;
+        }
+      })), _class2)) || _class));
 
       cclegacy._RF.pop();
     }
@@ -104851,6 +105063,219 @@ System.register("chunks:///_virtual/PartTask.ts", ['./rollupPluginModLoBabelHelp
           return null;
         }
       }), _applyDecoratedDescriptor(_class2.prototype, "onMainTaskUpdate", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "onMainTaskUpdate"), _class2.prototype)), _class2)) || _class));
+
+      cclegacy._RF.pop();
+    }
+  };
+});
+
+System.register("chunks:///_virtual/PathConst.ts", ['cc'], function (exports) {
+  var cclegacy;
+  return {
+    setters: [function (module) {
+      cclegacy = module.cclegacy;
+    }],
+    execute: function () {
+      cclegacy._RF.push({}, "ac8acp3U9tAoImWCM3rK921", "PathConst", undefined);
+      /**
+       * 联通点图
+       */
+
+
+      var ConnectPointMap = exports('ConnectPointMap', {
+        "0": ["1"],
+        "1": ["2"],
+        "2": ["3", "17"],
+        "3": ["4", "12"],
+        "4": ["5", "22"],
+        "5": ["6"],
+        "6": ["7", "13"],
+        "7": ["8"],
+        "8": ["9"],
+        "9": ["10"],
+        "10": ["11"],
+        "11": ["12"],
+        "13": ["14"],
+        "14": ["15"],
+        "15": ["16"],
+        "16": ["17"],
+        "17": ["18"],
+        "18": ["19", "20"],
+        "20": ["21"],
+        "21": ["22"]
+      });
+
+      cclegacy._RF.pop();
+    }
+  };
+});
+
+System.register("chunks:///_virtual/PathGraphConnector.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc'], function (exports) {
+  var _createForOfIteratorHelperLoose, _createClass, cclegacy;
+
+  return {
+    setters: [function (module) {
+      _createForOfIteratorHelperLoose = module.createForOfIteratorHelperLoose;
+      _createClass = module.createClass;
+    }, function (module) {
+      cclegacy = module.cclegacy;
+    }],
+    execute: function () {
+      cclegacy._RF.push({}, "15886RTKiNPaZkkOEMAdPsI", "PathGraphConnector", undefined);
+
+      var PathGraphConnector = exports('PathGraphConnector', /*#__PURE__*/function () {
+        function PathGraphConnector() {
+          /**
+           * 配置路径点
+           */
+          this.pathSegmentList = [];
+          /**
+           * 生成有向图
+           */
+
+          this.graph = null;
+        } //this.initCfg();
+
+
+        var _proto = PathGraphConnector.prototype;
+        /**
+         * 加载配置路径
+         */
+
+        _proto.initCfg = function initCfg() {// let tDPathCfg = GlobalVar.DataConf.tDPathResource.all();
+          // for (let key in tDPathCfg) {
+          //     if (!Object.prototype.hasOwnProperty.call(tDPathCfg, key)) continue;
+          //     let config = tDPathCfg[key];
+          //     let paths = config.path;
+          //     let pathList = [];
+          //     for (let i = 0; i < paths.length; i++) {
+          //         const path = paths[i];
+          //         pathList.push({ x: path[0], y: path[1] });
+          //     }
+          //     this.pathSegmentList.push(pathList);
+          // }
+          // if (!this.graph) {
+          //     this.buildGraph(this.pathSegmentList);
+          // }
+        }
+        /**
+         * @desc:设置路径点
+         * @param pathSegment 
+         */
+        ;
+
+        _proto.setPathSegment = function setPathSegment(pathSegment) {
+          this.pathSegmentList = pathSegment;
+
+          if (!this.graph) {
+            this.buildGraph(this.pathSegmentList);
+          }
+        };
+
+        _proto.connectPaths = function connectPaths(start, end) {
+          if (this.graph) {
+            return this.findPath(this.graph, start, end);
+          }
+
+          return [];
+        };
+
+        _proto.buildGraph = function buildGraph(segments) {
+          var _this = this;
+
+          var graph = new Map();
+          segments.forEach(function (seg) {
+            for (var i = 0; i < seg.length; i++) {
+              var pointKey = _this.vecToKey(seg[i]); // 添加前向连接
+
+
+              if (i < seg.length - 1) {
+                var connections = graph.get(pointKey) || [];
+                connections.push(seg[i + 1]);
+                graph.set(pointKey, connections);
+              } // 添加反向连接
+
+
+              if (i > 0) {
+                var _connections = graph.get(pointKey) || [];
+
+                _connections.push(seg[i - 1]);
+
+                graph.set(pointKey, _connections);
+              }
+            }
+          });
+          console.log("构建的图结构:", graph); // 打印构建的图结构以进行调试和 verificatio
+
+          this.graph = graph;
+          return graph;
+        };
+
+        _proto.findPath = function findPath(graph, start, end) {
+          var visited = new Set();
+          var queue = [{
+            path: [start],
+            current: start
+          }];
+
+          while (queue.length > 0) {
+            var _ref = queue.shift(),
+                path = _ref.path,
+                current = _ref.current;
+
+            if (this.pointsEqual(current, end)) {
+              return path;
+            }
+
+            var connections = graph.get(this.vecToKey(current)) || [];
+
+            for (var _iterator = _createForOfIteratorHelperLoose(connections), _step; !(_step = _iterator()).done;) {
+              var next = _step.value;
+              var key = this.vecToKey(next);
+
+              if (!visited.has(key)) {
+                visited.add(key);
+                queue.push({
+                  path: [].concat(path, [next]),
+                  current: next
+                });
+              }
+            }
+          }
+
+          throw new Error("\u65E0\u6CD5\u4ECE " + start + " \u8FDE\u63A5\u5230 " + end);
+        };
+
+        _proto.vecToKey = function vecToKey(v) {
+          return v.x.toFixed() + "," + v.y.toFixed(0);
+        };
+
+        _proto.pointsEqual = function pointsEqual(a, b) {
+          return this.getDistance(a.x, a.y, b.x, b.y) < 0.5; //return a.sub(b).mag() < 0.5;
+        };
+
+        _proto.getDistance = function getDistance(scrX, srcY, dstX, dstY) {
+          var dx = dstX - scrX;
+          var dy = dstY - srcY;
+          return Math.sqrt(dx * dx + dy * dy);
+        };
+
+        _createClass(PathGraphConnector, null, [{
+          key: "instance",
+          get: function get() {
+            if (!this._instance) {
+              this._instance = new PathGraphConnector();
+            }
+
+            return this._instance;
+          }
+        }]);
+
+        return PathGraphConnector;
+      }());
+      /** 单例 */
+
+      PathGraphConnector._instance = void 0;
 
       cclegacy._RF.pop();
     }
@@ -144883,9 +145308,9 @@ System.register("chunks:///_virtual/sprintf.mjs_cjs=&original=.js", ['./sprintf.
   };
 });
 
-System.register("chunks:///_virtual/src_game", ['./GlobalVar.ts', './ActSockets.ts', './Actor.ts', './ActorHero.ts', './ActorMain.ts', './ActorMonster.ts', './AnimKeyFrameCom.ts', './AttrsData.ts', './AttrDecorator.ts', './HpProgress.ts', './ColorConst.ts', './EColor.ts', './FontConst.ts', './TsButton.ts', './TsLabel.ts', './TsLayout.ts', './TsListItem.ts', './TsListView.ts', './Avatar.ts', './BindSize.ts', './ByBezier.ts', './CustomSportsBase.ts', './LinkPrefab.ts', './MotionTreakAvatar.ts', './NodeSizeChange.ts', './RemoteSpriteFrame.ts', './RollNode.ts', './Spine.ts', './StableHide.ts', './TiShenHide.ts', './TouchOutBgClose.ts', './TouchPage.ts', './TouchPageOffList.ts', './ViewMask.ts', './ByLayout.ts', './BySelect.ts', './LoadDelay.ts', './ByListItem.ts', './ByListNesting.ts', './ByListView.ts', './ByProgressBar.ts', './SportMathCircle.ts', './SportMathParabola.ts', './CtrlConfig.ts', './DataConf.ts', './DefineConst.ts', './GameEvents.ts', './ModelConfig.ts', './NetworkEnum.ts', './UserDataKey.ts', './ViewConfig.ts', './ConsumeData.ts', './EventConst.ts', './GameConst.ts', './ItemConst.ts', './ModuleConst.ts', './TextConst.ts', './GameApp.ts', './PerformanceMonitor.ts', './Agent.ts', './Common.ts', './Simulator.ts', './kdtree.ts', './SceneMgr.ts', './Timer.ts', './UserData.ts', './DataClass.ts', './DataHandler.ts', './_5c6f57.ts', './CompBase.ts', './CtrlBase.ts', './MCBase.ts', './ModelBase.ts', './TimerProxy.ts', './ViewBase.ts', './Connection.ts', './IOBuffer.ts', './LoginMgr.ts', './NetworkMgr.ts', './Packet.ts', './PacketReader.ts', './ProtobufMgr.ts', './AvatarMgr.ts', './FrameCache.ts', './RedNodeMgr.ts', './RemoteTexture.ts', './ResLoader.ts', './ViewMgr.ts', './TDFSM.ts', './TDStateAtk.ts', './TDStateBase.ts', './TDStateCheer.ts', './TDStateDie.ts', './TDStateDisplay.ts', './TDStateIdle.ts', './TDStateMainAtk.ts', './TDStateMainIdle.ts', './TDStateMainRest.ts', './TDStateMove.ts', './TDStateRest.ts', './Queue.ts', './RandomWarp.mjs_cjs=&original=.js', './pako.mjs_cjs=&original=.js', './pbkiller.mjs_cjs=&original=.js', './snappyjs.mjs_cjs=&original=.js', './sprintf.mjs_cjs=&original=.js', './Callback.ts', './CallbackManager.ts', './FollowCom.ts', './FollowSys.ts', './FollowSysManager.ts', './UIFollowCom.ts', './AchieveCtrl.ts', './AchieveModel.ts', './AchieveTaskItemComp.ts', './AchieveView.ts', './AdvertiseCtrl.ts', './AdvertiseModel.ts', './BagCtrl.ts', './EquipCtrl.ts', './BagConst.ts', './BagModel.ts', './EquipConst.ts', './EquipModel.ts', './GridDto.ts', './GridHelper.ts', './BagBatchItem.ts', './BagBatchUse.ts', './BagBoxOpenRandom.ts', './BagBoxOpenSelect.ts', './BagList.ts', './EquipList.ts', './BagGridTips.ts', './BagTip.ts', './BagTipsBg.ts', './BagTipsBoxItem.ts', './BagTipsBtn.ts', './BagTipsDesc.ts', './BagTipsFJSX.ts', './BagTipsHHTZ.ts', './BagTipsJCSX.ts', './BagTipsNodeBase.ts', './BagTipsSkill.ts', './BagTipsTZ.ts', './BagTipsXQSX.ts', './EquipWearItem.ts', './GridItem.ts', './GridItemCenter.ts', './GridItemCount.ts', './GridItemEffect.ts', './GridItemLevel.ts', './GridItemLuck.ts', './GridItemStage.ts', './GridItemType.ts', './GridItemUp.ts', './GridNode.ts', './BeastCtrl.ts', './BeastModel.ts', './BeastBaldricSelectView.ts', './BeastBaldricUpgradeView.ts', './BeastBaldricView.ts', './BeastCrystalView.ts', './BeastDetailTips.ts', './BeastFigureStarView.ts', './BeastFigureTips.ts', './BeastFigureView.ts', './BeastLevelView.ts', './BeastMainView.ts', './BeastStar.ts', './BeastBaldricItem.ts', './BeastBaldricPosItem.ts', './BeastCrystalItem.ts', './BeastFigureItem.ts', './BuffCtrl.ts', './BuffModel.ts', './Building.ts', './InCityMapManager.ts', './BuildingCtrl.ts', './FurnitureCtrl.ts', './BuildingModel.ts', './FurnitureModel.ts', './BuildDetailView.ts', './BuildDetailCom.ts', './BuildExport.ts', './BuildPartInfoCom.ts', './BuildPeopleInfoCom.ts', './BuildUpCondCom.ts', './BuildUpConditionItem.ts', './BuildUpingCom.ts', './BuildingInfo.ts', './ChapterCtrl.ts', './ChapterModel.ts', './ChapterTaskItem.ts', './ChapterTaskView.ts', './ChatCtrl.ts', './ChatData.ts', './ChatHelper.ts', './ChatModel.ts', './ChatExNode.ts', './ChatItemNode.ts', './ChatMainView.ts', './ChatPage3.ts', './TeamMsgExNode.ts', './AvatarItem.ts', './AvatarItemPrefab.ts', './BubblePromptV.ts', './BySpriteLabel.ts', './CommonPropV.ts', './ConditionConst.ts', './ConditionHelper.ts', './ConditionParser.ts', './ConditionTargetHelper.ts', './ConditionTargetParser.ts', './ConditionTargets.ts', './Conditions.ts', './ConsumeHelper.ts', './FlyItemCost.ts', './GridItemPrefab.ts', './ItemCost.ts', './JumpHelper.ts', './KeyboardController.ts', './OperateMenu.ts', './ResLoaderHelper.ts', './RichTextHandler.ts', './TabViewBase.ts', './TabViewComp.ts', './BgBaseNode.ts', './BgPrefab.ts', './ByCommonBtn.ts', './ByNoItem.ts', './TabTyData.ts', './DialogComTips.ts', './ConsumeItem.ts', './MaterialMgr.ts', './MaterialCost.ts', './SourceMv.ts', './TurnTable.ts', './GridTips.ts', './StatTips.ts', './CurrencyCtrl.ts', './CurrencyModel.ts', './DailyGiftCtrl.ts', './DailyGiftModel.ts', './DailyGiftV.ts', './DailyTaskCtrl.ts', './DailyTaskModel.ts', './DailyTaskItem.ts', './DailyTaskView.ts', './TaskBoxItem.ts', './DebugConf.ts', './DebugCtrl.ts', './DebugModel.ts', './DebugSkillView.ts', './DebugUtils.ts', './GM.ts', './SkillNode.ts', './DebugCommand.ts', './DebugCommon.ts', './DebugGoods.ts', './DressCtrl.ts', './DressModel.ts', './DressDetailView.ts', './DressMainView.ts', './DressUpStarView.ts', './DressMainItem.ts', './AddTips.ts', './BreakDownView.ts', './CompoundView.ts', './CuipingView.ts', './PzSuitTips.ts', './StrengthMainView.ts', './StrengthView.ts', './CompoundItem.ts', './StrengthEquipItem.ts', './StrengthEquipList.ts', './FightForceChangeV.ts', './RollNumber.ts', './FlyResV.ts', './FriendCtrl.ts', './FriendModel.ts', './AddFriendItem.ts', './AddFriendView.ts', './FriendItemBase.ts', './FriendMainItem1.ts', './FriendMainView.ts', './FriendPage1.ts', './FriendPage2.ts', './FriendPage3.ts', './FriendPage4.ts', './FunctionPreOpenCtrl.ts', './FunctionPreOpenModel.ts', './FunctionPreOpenVo.ts', './FunctionPreOpenItem.ts', './FunctionPreOpenV.ts', './GuideCtrl.ts', './BattleGuideModel.ts', './GuideConst.ts', './GuideModel.ts', './BattleGuideLayer.ts', './GuideLayer.ts', './GuideMaskNode.ts', './GuideNode.ts', './GuideWaitNode.ts', './HeadImageCtrl.ts', './HeadImageModel.ts', './HeadImageView.ts', './TitleItem.ts', './TitleItemPrefab.ts', './headItem.ts', './HeadPart.ts', './InfluenceCultivateV.ts', './InfluenceDonateV.ts', './InfluenceEncounterV.ts', './InfluenceJobV.ts', './InfluenceMainV.ts', './InfluenceNpcTalkV.ts', './InfluenceShopV.ts', './InfluenceSkillV.ts', './InfluenceWagesV.ts', './InfluenceWorkV.ts', './InfluenceDonateItem.ts', './InfluenceItem.ts', './InfluenceJobItem.ts', './InfluenceNpc.ts', './InfluenceShopItem.ts', './InfluenceSkillItem.ts', './InfluenceTalkItem.ts', './InfluenceWorkItem.ts', './LoginCtrl.ts', './ReconnectCtrl.ts', './CreateRoleView.ts', './LookOtherComp.ts', './LookOtherFashionPart.ts', './LookOtherHunDaoQiPart.ts', './LookOtherPartBase.ts', './LookOtherRiderPart.ts', './LookOtherView.ts', './LookOtherWuHunPart.ts', './FashionItem.ts', './HunDaoQiItem.ts', './LookOtherItemBase.ts', './RiderItem.ts', './LuckyBoxCtrl.ts', './LuckyBoxModel.ts', './LuckyBoxHelpView.ts', './LuckyBoxItem.ts', './LuckyBoxView.ts', './LuckyLotteryCtrl.ts', './LuckyLotteryModel.ts', './LuckyLotteryHelpView.ts', './LuckyLotteryItem.ts', './LuckyLotteryView.ts', './MailCtrl.ts', './MailModel.ts', './MailContentView.ts', './MailItem.ts', './MailView.ts', './ChapterNode.ts', './ChapterTypeNode.ts', './ElasticMenu.ts', './LuckFallItem.ts', './MainInfo.ts', './MainInterface.ts', './MenuIcon.ts', './ModuleBtn.ts', './SelectLevelView.ts', './ActIconCtrl.ts', './SceneUICtrl.ts', './SelectLevelCtrl.ts', './TravelCtrl.ts', './SceneUIModel.ts', './SelectLevelModel.ts', './TeamData.ts', './TravelModel.ts', './PartBottom.ts', './PartChat.ts', './PartChatper.ts', './PartLeftIcon.ts', './PartMainItemCost.ts', './PartMoney.ts', './PartRightBottom.ts', './PartRightBottom2.ts', './PartRightTop.ts', './PartRoleInfo.ts', './PartTask.ts', './TravelView.ts', './MainQuestV.ts', './MartialArtsCtrl.ts', './MartialArtsConst.ts', './MartialArtsModel.ts', './MartialArtsV.ts', './JueJiGrid.ts', './MartialArtsXinFaItem.ts', './MartialArtsGongFa.ts', './MartialArtsJueJi.ts', './MartialArtsJueJiSelect.ts', './MartialArtsSkillTips.ts', './MartialArtsXinFa.ts', './ParamParser.ts', './MessageCtrl.ts', './MessageModel.ts', './MsgConsts.ts', './BroadcastView.ts', './PersonalInfoCtrl.ts', './PersonalInfoModel.ts', './ExchangeCodeV.ts', './ModifyNameV.ts', './PersonalInfoV.ts', './SettingOptionItem.ts', './SwitchServersV.ts', './PlayerCtrl.ts', './PlayerModel.ts', './PhysicalBuyView.ts', './PhysicalItem.ts', './PlayerMainView.ts', './PreyBossCtrl.ts', './PreyBossModel.ts', './PreyBossConst.ts', './PreyBossRootView.ts', './PreyBossBtn.ts', './PreyBossBloodItem.ts', './PreyBossInfoItem.ts', './PreyBossRankRwItem.ts', './PreyBossShopItem.ts', './PreyBossSkillItem.ts', './PreyBossRankRwView.ts', './PreyBossResultView.ts', './PreyBossShopView.ts', './PrologueHelper.ts', './PrologueModel.ts', './PrologueActive.ts', './PrologueView.ts', './QuestionnaireCtrl.ts', './QuestionnaireModel.ts', './RankCtrl.ts', './RankConst.ts', './RankModel.ts', './ChallengeRankView.ts', './ExtraRankItem.ts', './PlayerGroupShow.ts', './RankView.ts', './ActivityRankView.ts', './PartRankAndRewardView.ts', './PartRankItem.ts', './PartRewardItem.ts', './RealmCtrl.ts', './RealmModel.ts', './RealmAttriNode.ts', './RealmMainView.ts', './RealmStudyPage.ts', './RealmUpAniView.ts', './RealmUpgradePage.ts', './ActivityCtrl.ts', './ConsumeActivityCtrl.ts', './ActivityModel.ts', './ConsumeActivityModel.ts', './ActivityMainView.ts', './ConsumeActivityV.ts', './ConsumeActivityItemV.ts', './DailyRechargeItem.ts', './GiftItem.ts', './PlatformTypeUtil.ts', './RechargeCtrl.ts', './RechargeModel.ts', './CoinBuyItem.ts', './CoinBuyV.ts', './FirstRechargeItem.ts', './FirstRechargeView.ts', './RechargeV.ts', './RedBindTarget.ts', './RedConst.ts', './RedModel.ts', './RedNode.ts', './RedVo.ts', './ResidentCtrl.ts', './ResidentModel.ts', './TDTime.ts', './compound-task.ts', './condition.ts', './domain.ts', './effect.ts', './logger.ts', './manager.ts', './method.ts', './node.ts', './plan.ts', './planner.ts', './primitive-task.ts', './response.ts', './time-manager.ts', './world-state.ts', './PointLayer.ts', './Resident.ts', './ResidentAllotView.ts', './ResidentArriveView.ts', './ResidentCdCom.ts', './ResidentCom.ts', './ResidentLayer.ts', './ResidentManager.ts', './ResidentSystem.ts', './ResidentWorldState.ts', './schedule.ts', './CompoundTasks.ts', './PrimitiveTask.ts', './types.ts', './RewardCtrl.ts', './RewardModel.ts', './CompoundSucTips.ts', './GetRewardsTips.ts', './JoinSucTips.ts', './LevelUpTips.ts', './GameScene.ts', './LightController.ts', './MainScene.ts', './SceneCamera.ts', './TestScene.ts', './PathPatrol.ts', './TeamPatrol.ts', './SettingCtrl.ts', './SettingModel.ts', './SevenGiftCtrl.ts', './SevenGiftModel.ts', './SevenGiftPkgVo.ts', './SevenGiftStageVo.ts', './SevenGiftTaskVo.ts', './BoxItemInfoPopV.ts', './SevenGiftListItem.ts', './SevenStageBoxItem.ts', './SevenGiftV.ts', './ShopConst.ts', './ShopCtrl.ts', './ShopModel.ts', './OpenBoxV.ts', './RangeSelect.ts', './ShopBuyV.ts', './ShopExchangeV.ts', './ShopHelpItem.ts', './ShopHelpView.ts', './ShopMv.ts', './ShopSubItem.ts', './ShopSubV.ts', './ShopSubV2.ts', './ShopHelpMiniItem.ts', './ShopItem0.ts', './ShopItem1.ts', './ShopItem2.ts', './ShopItem3.ts', './NewSkillCtrl.ts', './NewSkillModel.ts', './TipsOpenModel.ts', './NewSkillMainView.ts', './SkillsMapView.ts', './SkillsMapItem.ts', './SoundCtrl.ts', './SpiritCtrl.ts', './SpiritModel.ts', './SpiritConst.ts', './SpirtRootView.ts', './SpiritElixirItem.ts', './SpiritItem.ts', './SpiritLvAttrItem.ts', './SpiritLvCostItem.ts', './SpiritElixirRootView.ts', './SpiritLevelRootView.ts', './StatCtrl.ts', './StatModel.ts', './StatNode.ts', './TaskDB.ts', './TaskCtrl.ts', './TaskModel.ts', './TeHuiPkgCtrl.ts', './TeHuiPkgModel.ts', './TeHuiPkgVo.ts', './TeHuiPkgItem.ts', './TeHuiPkgView.ts', './drawLine.ts', './testMath.ts', './ListTestView.ts', './TestCtrl.ts', './TestModel.ts', './TestView.ts', './TimeCtrl.ts', './TimeModel.ts', './LoginNoticeTips2.ts', './TipsCtrl.ts', './ViewBaseTips.ts', './YongHuTips.ts', './TriggerGiftCtrl.ts', './TriggerGiftModel.ts', './LimitTimeGift.ts', './TriggerGiftView.ts', './TutorailTalkView.ts', './TutorialFoodSelecView.ts', './UnlockNewModCtrl.ts', './UnlockNewModModel.ts', './UnlockNewModView.ts', './WelfareCtrl.ts', './WelfareConst.ts', './WelfareModel.ts', './AdventureFundView.ts', './MasterTokenPrivilegeView.ts', './MasterTokenView.ts', './MonthCardShopView.ts', './MonthCardView.ts', './SignInView.ts', './WelfareMainView.ts', './AdventureFundItem.ts', './MasterTokenItem.ts', './MasterTokenRewardItem.ts', './MonthCardItem.ts', './MonthCardShopItem.ts', './ObjectPoolManager.ts', './DateUtils.ts', './DescriptorUtils.ts', './GameHelper.ts', './HtmlUtils.ts', './LoadRemoteAtlas.ts', './MathUtils.ts', './ModuleUtils.ts', './PhysicsUtil.ts', './TiShenHelper.ts', './DragableCom.ts', './GameCamera.ts', './HpBar.ts', './TBDmgLabel.ts', './TBManager.ts', './TBObjs.ts', './TBUICom.ts', './ConfigValueHelper.ts', './Data2JsonUtil.ts', './MathUtils2.ts', './ResourceHelper.ts', './Utils.ts', './ViewHelper.ts'], function () {
+System.register("chunks:///_virtual/src_game", ['./GlobalVar.ts', './ActSockets.ts', './Actor.ts', './ActorHero.ts', './ActorMain.ts', './ActorMonster.ts', './AnimKeyFrameCom.ts', './AttrsData.ts', './AttrDecorator.ts', './HpProgress.ts', './ColorConst.ts', './EColor.ts', './FontConst.ts', './TsButton.ts', './TsLabel.ts', './TsLayout.ts', './TsListItem.ts', './TsListView.ts', './Avatar.ts', './BindSize.ts', './ByBezier.ts', './CustomSportsBase.ts', './LinkPrefab.ts', './MotionTreakAvatar.ts', './NodeSizeChange.ts', './RemoteSpriteFrame.ts', './RollNode.ts', './Spine.ts', './StableHide.ts', './TiShenHide.ts', './TouchOutBgClose.ts', './TouchPage.ts', './TouchPageOffList.ts', './ViewMask.ts', './ByLayout.ts', './BySelect.ts', './LoadDelay.ts', './ByListItem.ts', './ByListNesting.ts', './ByListView.ts', './ByProgressBar.ts', './SportMathCircle.ts', './SportMathParabola.ts', './CtrlConfig.ts', './DataConf.ts', './DefineConst.ts', './GameEvents.ts', './ModelConfig.ts', './NetworkEnum.ts', './UserDataKey.ts', './ViewConfig.ts', './ConsumeData.ts', './EventConst.ts', './GameConst.ts', './ItemConst.ts', './ModuleConst.ts', './TextConst.ts', './GameApp.ts', './PerformanceMonitor.ts', './Agent.ts', './Common.ts', './Simulator.ts', './kdtree.ts', './SceneMgr.ts', './Timer.ts', './UserData.ts', './DataClass.ts', './DataHandler.ts', './_5c6f57.ts', './CompBase.ts', './CtrlBase.ts', './MCBase.ts', './ModelBase.ts', './TimerProxy.ts', './ViewBase.ts', './Connection.ts', './IOBuffer.ts', './LoginMgr.ts', './NetworkMgr.ts', './Packet.ts', './PacketReader.ts', './ProtobufMgr.ts', './AvatarMgr.ts', './FrameCache.ts', './RedNodeMgr.ts', './RemoteTexture.ts', './ResLoader.ts', './ViewMgr.ts', './TDFSM.ts', './TDStateAtk.ts', './TDStateBase.ts', './TDStateCheer.ts', './TDStateDie.ts', './TDStateDisplay.ts', './TDStateIdle.ts', './TDStateMainAtk.ts', './TDStateMainIdle.ts', './TDStateMainRest.ts', './TDStateMove.ts', './TDStateRest.ts', './Queue.ts', './RandomWarp.mjs_cjs=&original=.js', './pako.mjs_cjs=&original=.js', './pbkiller.mjs_cjs=&original=.js', './snappyjs.mjs_cjs=&original=.js', './sprintf.mjs_cjs=&original=.js', './Callback.ts', './CallbackManager.ts', './FollowCom.ts', './FollowSys.ts', './FollowSysManager.ts', './UIFollowCom.ts', './AchieveCtrl.ts', './AchieveModel.ts', './AchieveTaskItemComp.ts', './AchieveView.ts', './AdvertiseCtrl.ts', './AdvertiseModel.ts', './BagCtrl.ts', './EquipCtrl.ts', './BagConst.ts', './BagModel.ts', './EquipConst.ts', './EquipModel.ts', './GridDto.ts', './GridHelper.ts', './BagBatchItem.ts', './BagBatchUse.ts', './BagBoxOpenRandom.ts', './BagBoxOpenSelect.ts', './BagList.ts', './EquipList.ts', './BagGridTips.ts', './BagTip.ts', './BagTipsBg.ts', './BagTipsBoxItem.ts', './BagTipsBtn.ts', './BagTipsDesc.ts', './BagTipsFJSX.ts', './BagTipsHHTZ.ts', './BagTipsJCSX.ts', './BagTipsNodeBase.ts', './BagTipsSkill.ts', './BagTipsTZ.ts', './BagTipsXQSX.ts', './EquipWearItem.ts', './GridItem.ts', './GridItemCenter.ts', './GridItemCount.ts', './GridItemEffect.ts', './GridItemLevel.ts', './GridItemLuck.ts', './GridItemStage.ts', './GridItemType.ts', './GridItemUp.ts', './GridNode.ts', './BeastCtrl.ts', './BeastModel.ts', './BeastBaldricSelectView.ts', './BeastBaldricUpgradeView.ts', './BeastBaldricView.ts', './BeastCrystalView.ts', './BeastDetailTips.ts', './BeastFigureStarView.ts', './BeastFigureTips.ts', './BeastFigureView.ts', './BeastLevelView.ts', './BeastMainView.ts', './BeastStar.ts', './BeastBaldricItem.ts', './BeastBaldricPosItem.ts', './BeastCrystalItem.ts', './BeastFigureItem.ts', './BuffCtrl.ts', './BuffModel.ts', './Building.ts', './InCityMapManager.ts', './BuildingCtrl.ts', './FurnitureCtrl.ts', './BuildingModel.ts', './FurnitureModel.ts', './BuildDetailView.ts', './BuildDetailCom.ts', './BuildExport.ts', './BuildPartInfoCom.ts', './BuildPeopleInfoCom.ts', './BuildUpCondCom.ts', './BuildUpConditionItem.ts', './BuildUpingCom.ts', './BuildingInfo.ts', './ChapterCtrl.ts', './ChapterModel.ts', './ChapterTaskItem.ts', './ChapterTaskView.ts', './ChatCtrl.ts', './ChatData.ts', './ChatHelper.ts', './ChatModel.ts', './ChatExNode.ts', './ChatItemNode.ts', './ChatMainView.ts', './ChatPage3.ts', './TeamMsgExNode.ts', './AvatarItem.ts', './AvatarItemPrefab.ts', './BubblePromptV.ts', './BySpriteLabel.ts', './CommonPropV.ts', './ConditionConst.ts', './ConditionHelper.ts', './ConditionParser.ts', './ConditionTargetHelper.ts', './ConditionTargetParser.ts', './ConditionTargets.ts', './Conditions.ts', './ConsumeHelper.ts', './FlyItemCost.ts', './GridItemPrefab.ts', './ItemCost.ts', './JumpHelper.ts', './KeyboardController.ts', './OperateMenu.ts', './ResLoaderHelper.ts', './RichTextHandler.ts', './TabViewBase.ts', './TabViewComp.ts', './BgBaseNode.ts', './BgPrefab.ts', './ByCommonBtn.ts', './ByNoItem.ts', './TabTyData.ts', './DialogComTips.ts', './ConsumeItem.ts', './MaterialMgr.ts', './MaterialCost.ts', './SourceMv.ts', './TurnTable.ts', './GridTips.ts', './StatTips.ts', './CurrencyCtrl.ts', './CurrencyModel.ts', './DailyGiftCtrl.ts', './DailyGiftModel.ts', './DailyGiftV.ts', './DailyTaskCtrl.ts', './DailyTaskModel.ts', './DailyTaskItem.ts', './DailyTaskView.ts', './TaskBoxItem.ts', './DebugConf.ts', './DebugCtrl.ts', './DebugModel.ts', './DebugSkillView.ts', './DebugUtils.ts', './GM.ts', './SkillNode.ts', './DebugCommand.ts', './DebugCommon.ts', './DebugGoods.ts', './DressCtrl.ts', './DressModel.ts', './DressDetailView.ts', './DressMainView.ts', './DressUpStarView.ts', './DressMainItem.ts', './AddTips.ts', './BreakDownView.ts', './CompoundView.ts', './CuipingView.ts', './PzSuitTips.ts', './StrengthMainView.ts', './StrengthView.ts', './CompoundItem.ts', './StrengthEquipItem.ts', './StrengthEquipList.ts', './FightForceChangeV.ts', './RollNumber.ts', './FlyResV.ts', './FriendCtrl.ts', './FriendModel.ts', './AddFriendItem.ts', './AddFriendView.ts', './FriendItemBase.ts', './FriendMainItem1.ts', './FriendMainView.ts', './FriendPage1.ts', './FriendPage2.ts', './FriendPage3.ts', './FriendPage4.ts', './FunctionPreOpenCtrl.ts', './FunctionPreOpenModel.ts', './FunctionPreOpenVo.ts', './FunctionPreOpenItem.ts', './FunctionPreOpenV.ts', './GuideCtrl.ts', './BattleGuideModel.ts', './GuideConst.ts', './GuideModel.ts', './BattleGuideLayer.ts', './GuideLayer.ts', './GuideMaskNode.ts', './GuideNode.ts', './GuideWaitNode.ts', './HeadImageCtrl.ts', './HeadImageModel.ts', './HeadImageView.ts', './TitleItem.ts', './TitleItemPrefab.ts', './headItem.ts', './HeadPart.ts', './InfluenceCultivateV.ts', './InfluenceDonateV.ts', './InfluenceEncounterV.ts', './InfluenceJobV.ts', './InfluenceMainV.ts', './InfluenceNpcTalkV.ts', './InfluenceShopV.ts', './InfluenceSkillV.ts', './InfluenceWagesV.ts', './InfluenceWorkV.ts', './InfluenceDonateItem.ts', './InfluenceItem.ts', './InfluenceJobItem.ts', './InfluenceNpc.ts', './InfluenceShopItem.ts', './InfluenceSkillItem.ts', './InfluenceTalkItem.ts', './InfluenceWorkItem.ts', './LoginCtrl.ts', './ReconnectCtrl.ts', './CreateRoleView.ts', './LookOtherComp.ts', './LookOtherFashionPart.ts', './LookOtherHunDaoQiPart.ts', './LookOtherPartBase.ts', './LookOtherRiderPart.ts', './LookOtherView.ts', './LookOtherWuHunPart.ts', './FashionItem.ts', './HunDaoQiItem.ts', './LookOtherItemBase.ts', './RiderItem.ts', './LuckyBoxCtrl.ts', './LuckyBoxModel.ts', './LuckyBoxHelpView.ts', './LuckyBoxItem.ts', './LuckyBoxView.ts', './LuckyLotteryCtrl.ts', './LuckyLotteryModel.ts', './LuckyLotteryHelpView.ts', './LuckyLotteryItem.ts', './LuckyLotteryView.ts', './MailCtrl.ts', './MailModel.ts', './MailContentView.ts', './MailItem.ts', './MailView.ts', './ChapterNode.ts', './ChapterTypeNode.ts', './ElasticMenu.ts', './LuckFallItem.ts', './MainInfo.ts', './MainInterface.ts', './MenuIcon.ts', './ModuleBtn.ts', './SelectLevelView.ts', './ActIconCtrl.ts', './SceneUICtrl.ts', './SelectLevelCtrl.ts', './TravelCtrl.ts', './SceneUIModel.ts', './SelectLevelModel.ts', './TeamData.ts', './TravelModel.ts', './PartBottom.ts', './PartChat.ts', './PartChatper.ts', './PartLeftIcon.ts', './PartMainItemCost.ts', './PartMoney.ts', './PartRightBottom.ts', './PartRightBottom2.ts', './PartRightTop.ts', './PartRoleInfo.ts', './PartTask.ts', './TravelView.ts', './MainQuestV.ts', './MartialArtsCtrl.ts', './MartialArtsConst.ts', './MartialArtsModel.ts', './MartialArtsV.ts', './JueJiGrid.ts', './MartialArtsXinFaItem.ts', './MartialArtsGongFa.ts', './MartialArtsJueJi.ts', './MartialArtsJueJiSelect.ts', './MartialArtsSkillTips.ts', './MartialArtsXinFa.ts', './ParamParser.ts', './MessageCtrl.ts', './MessageModel.ts', './MsgConsts.ts', './BroadcastView.ts', './PersonalInfoCtrl.ts', './PersonalInfoModel.ts', './ExchangeCodeV.ts', './ModifyNameV.ts', './PersonalInfoV.ts', './SettingOptionItem.ts', './SwitchServersV.ts', './PlayerCtrl.ts', './PlayerModel.ts', './PhysicalBuyView.ts', './PhysicalItem.ts', './PlayerMainView.ts', './PreyBossCtrl.ts', './PreyBossModel.ts', './PreyBossConst.ts', './PreyBossRootView.ts', './PreyBossBtn.ts', './PreyBossBloodItem.ts', './PreyBossInfoItem.ts', './PreyBossRankRwItem.ts', './PreyBossShopItem.ts', './PreyBossSkillItem.ts', './PreyBossRankRwView.ts', './PreyBossResultView.ts', './PreyBossShopView.ts', './PrologueHelper.ts', './PrologueModel.ts', './PrologueActive.ts', './PrologueView.ts', './QuestionnaireCtrl.ts', './QuestionnaireModel.ts', './RankCtrl.ts', './RankConst.ts', './RankModel.ts', './ChallengeRankView.ts', './ExtraRankItem.ts', './PlayerGroupShow.ts', './RankView.ts', './ActivityRankView.ts', './PartRankAndRewardView.ts', './PartRankItem.ts', './PartRewardItem.ts', './RealmCtrl.ts', './RealmModel.ts', './RealmAttriNode.ts', './RealmMainView.ts', './RealmStudyPage.ts', './RealmUpAniView.ts', './RealmUpgradePage.ts', './ActivityCtrl.ts', './ConsumeActivityCtrl.ts', './ActivityModel.ts', './ConsumeActivityModel.ts', './ActivityMainView.ts', './ConsumeActivityV.ts', './ConsumeActivityItemV.ts', './DailyRechargeItem.ts', './GiftItem.ts', './PlatformTypeUtil.ts', './RechargeCtrl.ts', './RechargeModel.ts', './CoinBuyItem.ts', './CoinBuyV.ts', './FirstRechargeItem.ts', './FirstRechargeView.ts', './RechargeV.ts', './RedBindTarget.ts', './RedConst.ts', './RedModel.ts', './RedNode.ts', './RedVo.ts', './ResidentCtrl.ts', './ResidentModel.ts', './TDTime.ts', './compound-task.ts', './condition.ts', './domain.ts', './effect.ts', './logger.ts', './manager.ts', './method.ts', './node.ts', './plan.ts', './planner.ts', './primitive-task.ts', './response.ts', './time-manager.ts', './world-state.ts', './Graph.ts', './PathConst.ts', './PathGraphConnector.ts', './PointLayer.ts', './Resident.ts', './ResidentAllotView.ts', './ResidentArriveView.ts', './ResidentCdCom.ts', './ResidentCom.ts', './ResidentLayer.ts', './ResidentManager.ts', './ResidentSystem.ts', './ResidentWorldState.ts', './schedule.ts', './CompoundTasks.ts', './PrimitiveTask.ts', './types.ts', './RewardCtrl.ts', './RewardModel.ts', './CompoundSucTips.ts', './GetRewardsTips.ts', './JoinSucTips.ts', './LevelUpTips.ts', './GameScene.ts', './LightController.ts', './MainScene.ts', './MultiTouchCtrl.ts', './SceneCamera.ts', './TestScene.ts', './PathPatrol.ts', './TeamPatrol.ts', './SettingCtrl.ts', './SettingModel.ts', './SevenGiftCtrl.ts', './SevenGiftModel.ts', './SevenGiftPkgVo.ts', './SevenGiftStageVo.ts', './SevenGiftTaskVo.ts', './BoxItemInfoPopV.ts', './SevenGiftListItem.ts', './SevenStageBoxItem.ts', './SevenGiftV.ts', './ShopConst.ts', './ShopCtrl.ts', './ShopModel.ts', './OpenBoxV.ts', './RangeSelect.ts', './ShopBuyV.ts', './ShopExchangeV.ts', './ShopHelpItem.ts', './ShopHelpView.ts', './ShopMv.ts', './ShopSubItem.ts', './ShopSubV.ts', './ShopSubV2.ts', './ShopHelpMiniItem.ts', './ShopItem0.ts', './ShopItem1.ts', './ShopItem2.ts', './ShopItem3.ts', './NewSkillCtrl.ts', './NewSkillModel.ts', './TipsOpenModel.ts', './NewSkillMainView.ts', './SkillsMapView.ts', './SkillsMapItem.ts', './SoundCtrl.ts', './SpiritCtrl.ts', './SpiritModel.ts', './SpiritConst.ts', './SpirtRootView.ts', './SpiritElixirItem.ts', './SpiritItem.ts', './SpiritLvAttrItem.ts', './SpiritLvCostItem.ts', './SpiritElixirRootView.ts', './SpiritLevelRootView.ts', './StatCtrl.ts', './StatModel.ts', './StatNode.ts', './TaskDB.ts', './TaskCtrl.ts', './TaskModel.ts', './TeHuiPkgCtrl.ts', './TeHuiPkgModel.ts', './TeHuiPkgVo.ts', './TeHuiPkgItem.ts', './TeHuiPkgView.ts', './drawLine.ts', './testMath.ts', './ListTestView.ts', './TestCtrl.ts', './TestModel.ts', './TestView.ts', './TimeCtrl.ts', './TimeModel.ts', './LoginNoticeTips2.ts', './TipsCtrl.ts', './ViewBaseTips.ts', './YongHuTips.ts', './TriggerGiftCtrl.ts', './TriggerGiftModel.ts', './LimitTimeGift.ts', './TriggerGiftView.ts', './TutorailTalkView.ts', './TutorialFoodSelecView.ts', './UnlockNewModCtrl.ts', './UnlockNewModModel.ts', './UnlockNewModView.ts', './WelfareCtrl.ts', './WelfareConst.ts', './WelfareModel.ts', './AdventureFundView.ts', './MasterTokenPrivilegeView.ts', './MasterTokenView.ts', './MonthCardShopView.ts', './MonthCardView.ts', './SignInView.ts', './WelfareMainView.ts', './AdventureFundItem.ts', './MasterTokenItem.ts', './MasterTokenRewardItem.ts', './MonthCardItem.ts', './MonthCardShopItem.ts', './ObjectPoolManager.ts', './DateUtils.ts', './DescriptorUtils.ts', './GameHelper.ts', './HtmlUtils.ts', './LoadRemoteAtlas.ts', './MathUtils.ts', './ModuleUtils.ts', './PhysicsUtil.ts', './TiShenHelper.ts', './DragableCom.ts', './GameCamera.ts', './HpBar.ts', './TBDmgLabel.ts', './TBManager.ts', './TBObjs.ts', './TBUICom.ts', './ConfigValueHelper.ts', './Data2JsonUtil.ts', './MathUtils2.ts', './ResourceHelper.ts', './Utils.ts', './ViewHelper.ts'], function () {
   return {
-    setters: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+    setters: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
     execute: function () {}
   };
 });
