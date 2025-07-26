@@ -1,8 +1,4 @@
-System.register("chunks:///_virtual/launcher", [], function () {
-  return {
-    execute: function () {}
-  };
-});
+System.register("chunks:///_virtual/launcher",[],(function(){return{execute:function(){}}}));
 
 (function(r) {
   r('virtual:///prerequisite-imports/launcher', 'chunks:///_virtual/launcher'); 

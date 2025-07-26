@@ -1,0 +1,259 @@
+{
+  "version": "1.0",
+  "type": "behavior-tree-editor",
+  "metadata": {
+    "name": "untitled",
+    "created": "2025-07-08T03:03:29.873Z",
+    "modified": "2025-07-08T03:03:29.873Z",
+    "version": "1.0",
+    "editorVersion": "1.0.0"
+  },
+  "nodes": [
+    {
+      "id": "node_8c6zaryhr",
+      "type": "root",
+      "name": "根节点",
+      "icon": "🌳",
+      "description": "行为树的根节点，每棵树只能有一个根节点\n\n⚠️ 注意：根节点只能连接一个子节点",
+      "x": 505,
+      "y": 50,
+      "children": [
+        "node_lwp0d03df"
+      ],
+      "properties": {},
+      "canHaveChildren": true,
+      "canHaveParent": false,
+      "maxChildren": 1,
+      "minChildren": 1,
+      "hasError": false
+    },
+    {
+      "id": "node_lwp0d03df",
+      "type": "repeater",
+      "name": "重复器",
+      "icon": "🔄",
+      "description": "重复执行子节点指定次数或无限次",
+      "x": 515,
+      "y": 224,
+      "children": [
+        "node_rydi4kkad"
+      ],
+      "properties": {
+        "count": {
+          "name": "重复次数",
+          "type": "number",
+          "value": -1,
+          "description": "重复执行次数，-1表示无限重复，必须是正整数",
+          "required": true
+        },
+        "endOnFailure": {
+          "name": "失败时停止",
+          "type": "boolean",
+          "value": false,
+          "description": "子节点失败时是否停止重复",
+          "required": false
+        },
+        "endOnSuccess": {
+          "name": "成功时停止",
+          "type": "boolean",
+          "value": false,
+          "description": "子节点成功时是否停止重复",
+          "required": false
+        }
+      },
+      "canHaveChildren": true,
+      "canHaveParent": true,
+      "maxChildren": 1,
+      "minChildren": 1,
+      "hasError": false,
+      "parent": "node_8c6zaryhr"
+    },
+    {
+      "id": "node_rydi4kkad",
+      "type": "random-selector",
+      "name": "随机选择器",
+      "icon": "🎲?",
+      "description": "随机顺序执行子节点，任一成功则成功",
+      "x": 515,
+      "y": 466,
+      "children": [
+        "node_oq4zxih5i",
+        "node_sve28gr2c"
+      ],
+      "properties": {
+        "reshuffleOnRestart": {
+          "name": "重启时重新洗牌",
+          "type": "boolean",
+          "value": true,
+          "description": "是否在每次重新开始时都重新洗牌子节点顺序",
+          "required": false
+        },
+        "abortType": {
+          "name": "中止类型",
+          "type": "select",
+          "value": "None",
+          "description": "决定节点在何种情况下会被中止",
+          "options": [
+            "None",
+            "LowerPriority",
+            "Self",
+            "Both"
+          ],
+          "required": false
+        }
+      },
+      "canHaveChildren": true,
+      "canHaveParent": true,
+      "minChildren": 2,
+      "hasError": false,
+      "parent": "node_lwp0d03df"
+    },
+    {
+      "id": "node_oq4zxih5i",
+      "type": "event-action",
+      "name": "事件动作",
+      "icon": "📢",
+      "description": "执行已注册的事件处理函数（推荐）\n\n⚠️ 注意：动作节点是叶子节点，不能连接子节点。如需顺序执行多个动作，请使用\"序列器\"节点包装。",
+      "x": 346.4144736842105,
+      "y": 656.875,
+      "children": [],
+      "properties": {
+        "eventName": {
+          "name": "事件名称",
+          "type": "string",
+          "value": "move_to_target",
+          "description": "要执行的事件名称（如：enemy.attack, player.move）",
+          "required": true
+        },
+        "parameters": {
+          "name": "事件参数",
+          "type": "string",
+          "value": "{type: 1, duration: 1 }",
+          "description": "传递给事件处理函数的参数（JSON格式）",
+          "required": false
+        },
+        "timeout": {
+          "name": "超时时间",
+          "type": "number",
+          "value": 0,
+          "description": "事件执行超时时间（秒），0表示无限制",
+          "required": false
+        }
+      },
+      "canHaveChildren": false,
+      "canHaveParent": true,
+      "maxChildren": 0,
+      "hasError": false,
+      "parent": "node_rydi4kkad"
+    },
+    {
+      "id": "node_sve28gr2c",
+      "type": "event-action",
+      "name": "事件动作",
+      "icon": "📢",
+      "description": "执行已注册的事件处理函数（推荐）\n\n⚠️ 注意：动作节点是叶子节点，不能连接子节点。如需顺序执行多个动作，请使用\"序列器\"节点包装。",
+      "x": 598.9473684210526,
+      "y": 658.421052631579,
+      "children": [],
+      "properties": {
+        "eventName": {
+          "name": "事件名称",
+          "type": "string",
+          "value": "move_to_target",
+          "description": "要执行的事件名称（如：enemy.attack, player.move）",
+          "required": true
+        },
+        "parameters": {
+          "name": "事件参数",
+          "type": "string",
+          "value": "{type: 2, duration: 2 }",
+          "description": "传递给事件处理函数的参数（JSON格式）",
+          "required": false
+        },
+        "timeout": {
+          "name": "超时时间",
+          "type": "number",
+          "value": 0,
+          "description": "事件执行超时时间（秒），0表示无限制",
+          "required": false
+        }
+      },
+      "canHaveChildren": false,
+      "canHaveParent": true,
+      "maxChildren": 0,
+      "hasError": false,
+      "parent": "node_rydi4kkad"
+    }
+  ],
+  "connections": [
+    {
+      "id": "node_8c6zaryhr-node_lwp0d03df",
+      "sourceId": "node_8c6zaryhr",
+      "targetId": "node_lwp0d03df",
+      "path": "M 584.9999999999998 160.99999678762327 C 584.9999999999998 193.49999678762327 594.9999999999998 193.49999678762327 594.9999999999998 225.99999678762325",
+      "active": false
+    },
+    {
+      "id": "node_lwp0d03df-node_rydi4kkad",
+      "sourceId": "node_lwp0d03df",
+      "targetId": "node_rydi4kkad",
+      "path": "M 594.9999999999998 319.0000032123765 C 594.9999999999998 393.5000028108294 594.9999999999998 393.5000028108294 594.9999999999998 468.0000024092823",
+      "active": false
+    },
+    {
+      "id": "node_rydi4kkad-node_oq4zxih5i",
+      "sourceId": "node_rydi4kkad",
+      "targetId": "node_oq4zxih5i",
+      "path": "M 594.9999999999998 610.0000080309413 C 594.9999999999998 640.0000080309413 426.40624999999983 628.8750096371297 426.40624999999983 658.8750096371297",
+      "active": false
+    },
+    {
+      "id": "node_rydi4kkad-node_sve28gr2c",
+      "sourceId": "node_rydi4kkad",
+      "targetId": "node_sve28gr2c",
+      "path": "M 594.9999999999998 610.0000080309413 C 594.9999999999998 640.0000080309413 680.7710346422695 628.3622500770967 680.7710346422695 658.3622500770967",
+      "active": false
+    }
+  ],
+  "blackboard": [
+    {
+      "name": "targetPosition",
+      "type": "vector3",
+      "value": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "defaultValue": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "description": "移动目标点",
+      "group": "移动",
+      "readOnly": false
+    },
+    {
+      "name": "autoMove",
+      "type": "boolean",
+      "value": true,
+      "defaultValue": true,
+      "description": "巡逻移动，否则是人工控制移动",
+      "group": "移动",
+      "readOnly": false
+    }
+  ],
+  "editorState": {
+    "canvasView": {
+      "panX": 0,
+      "panY": 0,
+      "zoomLevel": 1
+    },
+    "selectedNodeId": "node_sve28gr2c",
+    "uiSettings": {
+      "showDescriptions": true,
+      "showNodeProperties": true,
+      "layoutAlgorithm": "compact"
+    }
+  }
+}
